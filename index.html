@@ -201,7 +201,7 @@
 
   async function fetchData() {
     const url = "https://api.airtable.com/v0/app7fpeg0ILdGtaVh/tblXAHReqUwulhpel";
-    const token = import.meta.env.VITE_AIRTABLE_TOKEN;
+    const token = AIRTABLE_TOKEN;
 
     try {
       const res = await fetch(url, {
