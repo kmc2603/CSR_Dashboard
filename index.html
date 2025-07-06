@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Free Eye Screening Camps Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 2rem;
+      background: linear-gradient(to right, #91EDBC, #e0f0ff);
+      color: #3B7A55;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      animation: fadeInDown 0.6s ease;
+    }
+    .cards-container {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    .card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      text-align: center;
+      width: 220px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: zoomIn 0.5s ease;
+      flex: 1 1 220px;
+      max-width: 220px;
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    .card b {
+      font-size: 1.8rem;
+      color: #0f5132;
+    }
+    .filter {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .filter select {
+      padding: 0.6rem 1rem;
+      font-size: 1rem;
+      border-radius: 0.75rem;
+      border: 1px solid #94a3b8;
+      background: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    canvas {
+      max-width: 75%;
+      margin: 0 auto 3rem;
+      display: block;
+      height: auto !important;
+      width: 90% !important;
+      max-height: 400px;
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes zoomIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .logo-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      margin: 2rem 0;
+      flex-wrap: wrap;
+      background: none;
+      padding: 0;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    .logo-bar img {
+      height: 150px;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+      border-radius: 0.75rem;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 0.5rem;
+    }
+
+    .logo-bar img:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 1rem;
+      }
+      h1 {
+        font-size: 2rem;
+      }
+      .logo-bar img {
+        height: 80px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .card {
+        max-width: 100%;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>👁️ Free Eye Screening Camps by WBMSCL and Gluconate Health Ltd. under Chokher Alo</h1>
+  <p style="text-align:center; max-width: 900px; margin: 0 auto 2rem; font-size: 1.05rem; color: #334155;">
+    These are <strong>Spectacle Identification centric camps</strong> organised by <strong>West Bengal Medical Service Corporation Ltd.</strong> and <strong>Gluconate Health Ltd.</strong> under their <strong>Corporate Social Responsibility (CSR)</strong> initiative, which mandates to spend at least 2% of their average net profit from the preceding three financial years on socially responsible activities. These camps are held in collaboration with the <strong>State NPCB & VI Division</strong>.
+  </p>
+  <div class="logo-bar">
+    <img src="https://dyncdn.exampathfinder.net/epf_n_attachments/organisation/tWqVdfTi/logo.png" alt="Chokher Alo Logo">
+    <img src="https://i.pinimg.com/736x/28/11/ba/2811ba7b891f9676e2236560f68802bf.jpg" alt="WBMSCL Logo">
+    <img src="https://space.bouncewatch.com/images/876291/GLUCONATE-HEALTH-LTD-logo.jpg" alt="Gluconate Logo">
+  </div>
+
+  <div class="filter">
+    <label for="districtFilter"><strong>Select District:</strong></label>
+    <select id="districtFilter">
+      <option value="All">All Districts</option>
+    </select>
+  </div>
+
+  <div class="cards-container" id="summaryCards"></div>
+
+  <h2 style="text-align:center; margin-top: 2rem;">📊 Block-wise Screening & Detection Summary</h2>
+  <canvas id="barChart"></canvas>
+
+  <h2 style="text-align:center; margin-top: 2rem;">📈 Day-wise Trend of Screenings and Spectacle Prescriptions</h2>
+  <canvas id="lineChart"></canvas>
+
+  <h2 style="text-align:center; margin-top: 2rem;">✅ Completion Rate toward Target Beneficiaries</h2>
+  <canvas id="completionChart"></canvas>
+
+<script>
+
+  let airtableData = [];
+  let barChartInstance, lineChartInstance, completionChartInstance;
+
+  const districtTargets = {
+    "Darjeeling": 850,
+    "Hooghly": 1450,
+    "Kalimpong": 900,
+    "Birbhum": 1400,
+    "Paschim Burdwan": 1350,
+    "Purulia": 1400,
+    "Nadia": 1200,
+    "Nandigram HD": 1300,
+    "Rampurhat HD": 1100,
+    "Coochbehar": 1300
+  };
+
+  async function fetchData() {
+    const url = "https://api.airtable.com/v0/app7fpeg0ILdGtaVh/tblXAHReqUwulhpel";
+    const token = "patnYTILmLxRi1udk.5679f82ff18a312ea1f9503e49abdd4a73b315a4a2a464aab6fa0ad2387975f5";
+
+    try {
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const json = await res.json();
+
+      airtableData = json.records.map(r => {
+        const f = r.fields;
+        return {
+          district: f["Name of the District"] || "",
+          block: f["Block at which camp held"] || "",
+          camp_date: f["Date of the Camp Being Held"] || "",
+          screened: +f["No. of persons Screened"] || 0,
+          re_detected: +f["No. of person detected with R.E."] || 0,
+          specs_prescribed: +f["No. of Spectacles prescribed"] || 0,
+          cataract_detected: +f["No. of person detected with Cataract"] || 0
+        };
+      });
+
+      populateDistricts();
+      renderDashboard();
+    } catch (error) {
+      alert("⚠️ Failed to load data");
+      console.error(error);
+    }
+  }
+
+  function populateDistricts() {
+  const sel = document.getElementById("districtFilter");
+  const districts = [...new Set(airtableData.map(d => d.district))].filter(d => d.trim() !== "");
+  const sortedDistricts = districts.sort((a, b) => a.localeCompare(b));
+
+  // Clear old options and re-add "All Districts"
+  sel.innerHTML = `<option value="All">All Districts</option>`;
+
+  sortedDistricts.forEach(d => {
+    const opt = document.createElement("option");
+    opt.value = d;
+    opt.textContent = d;
+    sel.appendChild(opt);
+  });
+}
+
+
+  function summarizeData(data, district) {
+    const target = district === "All"
+      ? Object.values(districtTargets).reduce((a, b) => a + b, 0)
+      : districtTargets[district] || 1300;
+
+    const completedCamps = data.filter(d => d.screened > 0);
+    const totalCampsDone = completedCamps.length;
+    const totalCampsAllotted = district === "All"
+      ? Object.keys(districtTargets).length * 10
+      : 10;
+
+    const totalSpecs = data.reduce((s, d) => s + d.specs_prescribed, 0);
+
+    return {
+      screened: data.reduce((s, d) => s + d.screened, 0),
+      re_detected: data.reduce((s, d) => s + d.re_detected, 0),
+      specs_prescribed: totalSpecs,
+      cataract_detected: data.reduce((s, d) => s + d.cataract_detected, 0),
+      camps_done: totalCampsDone,
+      camps_allotted: totalCampsAllotted,
+      expected_target: target,
+      completion_pct: Math.min(100, Math.round((totalSpecs / target) * 100)) || 0,
+      avg_specs_per_camp: Math.round(totalSpecs / (totalCampsDone || 1)),
+      expected_specs_per_camp: Math.round(target / totalCampsAllotted)
+    };
+  }
+
+  function groupByBlock(data) {
+    const map = {};
+    data.forEach(d => {
+      if (!map[d.block]) map[d.block] = { screened: 0, re: 0, cataract: 0 };
+      map[d.block].screened += d.screened;
+      map[d.block].re += d.re_detected;
+      map[d.block].cataract += d.cataract_detected;
+    });
+    return map;
+  }
+
+  function groupByDate(data) {
+    const map = {};
+    data.forEach(d => {
+      if (!d.camp_date) return;
+      if (!map[d.camp_date]) map[d.camp_date] = { screened: 0, specs: 0 };
+      map[d.camp_date].screened += d.screened;
+      map[d.camp_date].specs += d.specs_prescribed;
+    });
+    return map;
+  }
+
+  function groupDistrictCompletion() {
+    const result = {};
+    Object.keys(districtTargets).forEach(d => {
+      const filtered = airtableData.filter(x => x.district === d);
+      const total = filtered.reduce((s, x) => s + x.specs_prescribed, 0);
+      result[d] = Math.min(100, Math.round((total / districtTargets[d]) * 100)) || 0;
+    });
+    return result;
+  }
+
+  function renderBarChart(data) {
+    const grouped = groupByBlock(data);
+    const labels = Object.keys(grouped);
+    const screened = labels.map(l => grouped[l].screened);
+    const re = labels.map(l => grouped[l].re);
+    const cataract = labels.map(l => grouped[l].cataract);
+
+    if (barChartInstance) barChartInstance.destroy();
+    const ctx = document.getElementById("barChart").getContext("2d");
+    barChartInstance = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [
+          { label: "Screened", data: screened, backgroundColor: "#60a5fa" },
+          { label: "R.E. Detected", data: re, backgroundColor: "#34d399" },
+          { label: "Cataract Detected", data: cataract, backgroundColor: "#f87171" }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+  }
+
+  function renderLineChart(data) {
+    const grouped = groupByDate(data);
+    const labels = Object.keys(grouped).sort((a, b) => new Date(a) - new Date(b));
+    const screened = labels.map(d => grouped[d].screened);
+    const specs = labels.map(d => grouped[d].specs);
+
+    if (lineChartInstance) lineChartInstance.destroy();
+    const ctx = document.getElementById("lineChart").getContext("2d");
+    lineChartInstance = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels,
+        datasets: [
+          { label: "Screened", data: screened, borderColor: "#60a5fa", fill: true, tension: 0.3 },
+          { label: "Spectacles Prescribed", data: specs, borderColor: "#34d399", fill: true, tension: 0.3 }
+        ]
+      },
+      options: { responsive: true, scales: { y: { beginAtZero: true } } }
+    });
+  }
+
+  function renderCompletionChart(data, district) {
+    const ctx = document.getElementById("completionChart").getContext("2d");
+    if (completionChartInstance) completionChartInstance.destroy();
+
+    if (district === "All") {
+      const completionData = groupDistrictCompletion();
+      const labels = Object.keys(completionData);
+      const values = Object.values(completionData);
+      completionChartInstance = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [{ label: "Completion %", data: values, backgroundColor: "#3b82f6" }]
+        },
+        options: {
+          responsive: true,
+          scales: { y: { beginAtZero: true, max: 100, ticks: { callback: v => v + "%" } } }
+        }
+      });
+    } else {
+      const total = summarizeData(data, district).completion_pct;
+      completionChartInstance = new Chart(ctx, {
+        type: "pie",
+        data: {
+          labels: ["Completed %", "Remaining %"],
+          datasets: [{
+            data: [total, 100 - total],
+            backgroundColor: ["#629477", "#e1ffa8"]
+          }]
+        },
+        options: { responsive: true }
+      });
+    }
+  }
+
+  function renderDashboard(district = "All") {
+  const data = district === "All"
+    ? airtableData
+    : airtableData.filter(d => d.district === district);
+
+  const sum = summarizeData(data, district);
+
+  document.getElementById("summaryCards").innerHTML = `
+    <div class="card">👥 Screened<br><b>${sum.screened}</b></div>
+    <div class="card">👓 R.E. Detected<br><b>${sum.re_detected}</b></div>
+    <div class="card">🩺 Spectacles Prescribed<br><b>${sum.specs_prescribed}</b></div>
+    <div class="card">👁️ Cataract Identified<br><b>${sum.cataract_detected}</b></div>
+    <div style="grid-column: 1 / -1; height: 1rem;"></div>
+    <div class="card">📊 Camps Done<br><b>${sum.camps_done}/${sum.camps_allotted}</b></div>
+    <div class="card">✅ Completion<br><b>${sum.completion_pct}%</b></div>
+    <div class="card">📅 Avg Spectacles/Camp<br><b>${sum.avg_specs_per_camp}</b></div>
+    <div class="card">📈 Expected Spectacles/Camp<br><b>${sum.expected_specs_per_camp}</b></div>
+    <div class="card">🎯 Total Expected Beneficiaries<br><b>${sum.expected_target}</b></div>
+  `;
+
+  renderBarChart(data);
+  renderLineChart(data);
+  renderCompletionChart(data, district);
+}
+// Existing renderDashboard function here...
+
+// Add these two lines at the end of <script>
+document.getElementById("districtFilter").addEventListener("change", function() {
+  renderDashboard(this.value);
+});
+
+fetchData();
+
+</script>
+</body>
+</html>
+
