@@ -200,35 +200,32 @@
   };
 
   async function fetchData() {
-   const res = await fetch("/api/data");
+  try {
+    const res = await fetch("/api/data");
     const json = await res.json();
 
-    try {
-      const res = await fetch(url, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const json = await res.json();
+    airtableData = json.records.map(r => {
+      const f = r.fields;
+      return {
+        district: f["Name of the District"] || "",
+        block: f["Block at which camp held"] || "",
+        camp_date: f["Date of the Camp Being Held"] || "",
+        screened: +f["No. of persons Screened"] || 0,
+        re_detected: +f["No. of person detected with R.E."] || 0,
+        specs_prescribed: +f["No. of Spectacles prescribed"] || 0,
+        cataract_detected: +f["No. of person detected with Cataract"] || 0
+      };
+    });
 
-      airtableData = json.records.map(r => {
-        const f = r.fields;
-        return {
-          district: f["Name of the District"] || "",
-          block: f["Block at which camp held"] || "",
-          camp_date: f["Date of the Camp Being Held"] || "",
-          screened: +f["No. of persons Screened"] || 0,
-          re_detected: +f["No. of person detected with R.E."] || 0,
-          specs_prescribed: +f["No. of Spectacles prescribed"] || 0,
-          cataract_detected: +f["No. of person detected with Cataract"] || 0
-        };
-      });
-
-      populateDistricts();
-      renderDashboard();
-    } catch (error) {
-      alert("⚠️ Failed to load data");
-      console.error(error);
-    }
+    populateDistricts();
+    renderDashboard();
+  } catch (error) {
+    alert("⚠️ Failed to load data");
+    console.error(error);
   }
+}
+
+
 
   function populateDistricts() {
   const sel = document.getElementById("districtFilter");
