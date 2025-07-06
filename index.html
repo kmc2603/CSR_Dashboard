@@ -216,7 +216,7 @@
           block: f["Block at which camp held"] || "",
           camp_date: f["Date of the Camp Being Held"] || "",
           screened: +f["No. of persons Screened"] || 0,
-          re_detected: +f["No. of person detected with Refractive Error"] || 0,
+          re_detected: +f["No. of person detected with R.E."] || 0,
           specs_prescribed: +f["No. of Spectacles prescribed"] || 0,
           cataract_detected: +f["No. of person detected with Cataract"] || 0
         };
@@ -321,7 +321,7 @@
         labels,
         datasets: [
           { label: "Screened", data: screened, backgroundColor: "#60a5fa" },
-          { label: "Refractive Error Detected", data: re, backgroundColor: "#34d399" },
+          { label: "R.E. Detected", data: re, backgroundColor: "#34d399" },
           { label: "Cataract Detected", data: cataract, backgroundColor: "#f87171" }
         ]
       },
@@ -398,7 +398,7 @@
   document.getElementById("summaryCards").innerHTML = `
 <div class="card district-card">🏙️ District<br><b>${district === "All" ? "All Districts" : district}</b></div>
     <div class="card">👥 Screened<br><b>${sum.screened}</b></div>
-    <div class="card">👓 Refractive Error Detected<br><b>${sum.re_detected}</b></div>
+    <div class="card">👓 R.E. Detected<br><b>${sum.re_detected}</b></div>
     <div class="card">🩺 Spectacles Prescribed<br><b>${sum.specs_prescribed}</b></div>
     <div class="card">👁️ Cataract Cases<br><b>${sum.cataract_detected}</b></div>
     
