@@ -23,23 +23,27 @@
       animation: fadeInDown 0.6s ease;
     }
     .cards-container {
-      display: flex;
-      gap: 1.5rem;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-bottom: 2rem;
+      display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+
     }
     .card {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 1.5rem;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-      text-align: center;
-      width: 220px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      animation: zoomIn 0.5s ease;
-      flex: 1 1 220px;
-      max-width: 220px;
+       background: white;
+  padding: 1rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  text-align: center;
+  width: 220px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: zoomIn 0.5s ease;
+  max-width: 220px;
+  word-wrap: break-word;
     }
     .card:hover {
       transform: translateY(-6px);
@@ -62,13 +66,15 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
     canvas {
-      max-width: 75%;
+      width: 100% !important;
+      height: auto !important;
+      max-width: 800px;
       margin: 0 auto 3rem;
       display: block;
-      height: auto !important;
-      width: 90% !important;
-      max-height: 400px;
     }
+   #completionChart {
+  max-width: 400px;
+}
     @keyframes fadeInDown {
       from { opacity: 0; transform: translateY(-30px); }
       to { opacity: 1; transform: translateY(0); }
@@ -122,6 +128,28 @@
         width: 100%;
       }
     }
+    @media (max-width: 600px) {
+     .cards-container {
+     flex-direction: column;
+     align-items: center;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 100%;
+    padding: 1rem;
+  }
+
+}
+ .district-card {
+  background: white  !important;
+  color:#004d40  !important;
+}
+.district-card b {
+  color: #d18090!important;
+}
+
+
   </style>
 </head>
 <body>
@@ -368,11 +396,12 @@
   const sum = summarizeData(data, district);
 
   document.getElementById("summaryCards").innerHTML = `
+<div class="card district-card">🏙️ District<br><b>${district === "All" ? "All Districts" : district}</b></div>
     <div class="card">👥 Screened<br><b>${sum.screened}</b></div>
     <div class="card">👓 R.E. Detected<br><b>${sum.re_detected}</b></div>
     <div class="card">🩺 Spectacles Prescribed<br><b>${sum.specs_prescribed}</b></div>
-    <div class="card">👁️ Cataract Identified<br><b>${sum.cataract_detected}</b></div>
-    <div style="grid-column: 1 / -1; height: 1rem;"></div>
+    <div class="card">👁️ Cataract Cases<br><b>${sum.cataract_detected}</b></div>
+    
     <div class="card">📊 Camps Done<br><b>${sum.camps_done}/${sum.camps_allotted}</b></div>
     <div class="card">✅ Completion<br><b>${sum.completion_pct}%</b></div>
     <div class="card">📅 Avg Spectacles/Camp<br><b>${sum.avg_specs_per_camp}</b></div>
@@ -386,9 +415,17 @@
 }
 // Existing renderDashboard function here...
 
-// Add these two lines at the end of <script>
-document.getElementById("districtFilter").addEventListener("change", function() {
-  renderDashboard(this.value);
+const districtSelect = document.getElementById("districtFilter");
+let lastSelectedDistrict = null;
+
+districtSelect.addEventListener("input", (e) => {
+  lastSelectedDistrict = e.target.value;
+});
+
+districtSelect.addEventListener("change", (e) => {
+  const value = e.target.value;
+  renderDashboard(value);
+  setTimeout(() => e.target.blur(), 10); // prevent scrolling after selection
 });
 
 fetchData();
