@@ -148,12 +148,66 @@
 .district-card b {
   color: #d18090!important;
 }
+.animated-eye {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 0.6rem;
+  cursor: pointer;
+}
+
+.animated-eye:hover .eye-lid {
+  animation-duration: 1s;
+}
+
+.eye-lid {
+  transform-origin: center;
+  animation: blink-lid 4s infinite;
+  transition: animation-duration 0.3s;
+}
+
+@keyframes blink-lid {
+  0%, 95%, 100% {
+    d: path("M10,50 Q50,10 90,50 Q50,90 10,50 Z"); /* Open eye wider */
+  }
+  48%, 52% {
+    d: path("M10,50 Q50,50 90,50 Q50,50 10,50 Z"); /* Closed eye */
+  }
+}
+
+.eye-ball,
+.pupil {
+  animation: eye-move 6s infinite ease-in-out;
+}
+
+@keyframes eye-move {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(1px, 1px);
+  }
+  50% {
+    transform: translate(-1px, -1px);
+  }
+  75% {
+    transform: translate(0.5px, -0.5px);
+  }
+}
 
 
   </style>
 </head>
 <body>
-  <h1>👁️ Free Eye Screening Camps by WBMSCL and Gluconate Health Ltd. under Chokher Alo</h1>
+   <h1>
+  <span class="animated-eye" aria-hidden="true">
+    <svg viewBox="0 0 100 100" width="60" height="60">
+      <path class="eye-lid" d="M10,50 Q50,10 90,50 Q50,90 10,50 Z" fill="white" stroke="#3B7A55" stroke-width="4"/>
+      <circle class="eye-ball" cx="50" cy="50" r="12" fill="white" stroke="#0f5132" stroke-width="2"/>
+      <circle class="pupil" cx="50" cy="50" r="5" fill="#0f5132"/>
+    </svg>
+  </span>
+  Free Eye Screening Camps by WBMSCL and Gluconate Health Ltd. under Chokher Alo
+</h1>
   <p style="text-align:center; max-width: 900px; margin: 0 auto 2rem; font-size: 1.05rem; color: #334155;">
     These are <strong>Spectacle Identification centric camps</strong> organised by <strong>West Bengal Medical Service Corporation Ltd.</strong> and <strong>Gluconate Health Ltd.</strong> under their <strong>Corporate Social Responsibility (CSR)</strong> initiative, which mandates to spend at least 2% of their average net profit from the preceding three financial years on socially responsible activities. These camps are held in collaboration with the <strong>State NPCB & VI Division</strong>.
   </p>
