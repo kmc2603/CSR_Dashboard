@@ -53,68 +53,18 @@
       font-size: 1.8rem;
       color: #0f5132;
     }
-/* Wrapper for the entire dropdown section */
-.district-filter-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: 2rem auto;
-  padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.9); /* Light frosted look */
-  border-radius: 1rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  max-width: 400px;
-  width: 90%;
-  backdrop-filter: blur(10px);
-}
-
-/* Label style */
-.district-label {
-  font-size: 1.3rem;
-  font-weight: 600;
-  margin-bottom: 0.8rem;
-  color: #1f2937; /* Dark gray text */
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-/* Select dropdown styling */
-.district-select {
-  padding: 0.8rem 1rem;
-  font-size: 1rem;
-  border-radius: 0.6rem;
-  border: 1px solid #cbd5e1;
-  background-color: #f1f5f9;
-  color: #0f172a;
-  width: 100%;
-  max-width: 300px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  transition: 0.2s ease-in-out;
-  appearance: none; /* Clean default UI for modern browsers */
-}
-
-/* Hover and focus effects for the dropdown */
-.district-select:hover,
-.district-select:focus {
-  border-color: #3b82f6; /* Blue highlight */
-  background-color: #ffffff;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-  cursor: pointer;
-}
-
-/* Responsive improvements (optional) */
-@media (max-width: 500px) {
-  .district-label {
-    font-size: 1.1rem;
-  }
-
-  .district-select {
-    font-size: 0.95rem;
-  }
-}
+    .filter {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .filter select {
+      padding: 0.6rem 1rem;
+      font-size: 1rem;
+      border-radius: 0.75rem;
+      border: 1px solid #94a3b8;
+      background: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
 
 
     canvas {
