@@ -53,47 +53,45 @@
       font-size: 1.8rem;
       color: #0f5132;
     }
-    .filter {
-  text-align: center;
+  .filter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 2rem;
 }
 
 .filter-label {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   font-weight: 600;
-  color: #1e293b;
-  margin-right: 0.5rem;
-  display: block;
-  margin-bottom: 0.5rem;
+  color: #1f2937; /* gray-800 */
+  margin-bottom: 0.6rem;
+  text-align: center;
 }
 
-.custom-select {
+.modern-select {
   padding: 0.75rem 1.25rem;
   font-size: 1rem;
   border-radius: 0.75rem;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #d1d5db; /* slate-300 */
   background-color: #ffffff;
-  color: #1e293b;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  color: #111827; /* slate-900 */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
   cursor: pointer;
+  width: 280px;
+  text-align: center;
 }
 
-.custom-select:hover {
-  border-color: #38bdf8;
-  box-shadow: 0 6px 20px rgba(56, 189, 248, 0.2);
+.modern-select:hover {
+  border-color: #3b82f6; /* blue-500 */
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.15);
 }
 
-.custom-select:focus {
+.modern-select:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: #2563eb; /* blue-600 */
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
-}
-
-.emoji {
-  font-size: 1.2rem;
-  vertical-align: middle;
-  margin-right: 0.3rem;
 }
 
     canvas {
