@@ -3,16 +3,14 @@ export function generatePDF(district = "All") {
   const margin = 15;
   let y = margin;
 
-  const summaryData = summarizeData(
-    district === "All"
-      ? window.airtableData
-      : window.airtableData.filter(d => d.district === district),
-    district
-  );
+  const data = district === "All"
+    ? window.airtableData
+    : window.airtableData.filter(d => d.district === district);
 
-  // Header
+  const summary = summarizeData(data, district);
+
+  // 🧾 Add text summary
   doc.setFontSize(16);
-  doc.setTextColor(40);
   doc.text("Eye Screening Report", margin, y);
   y += 8;
   doc.setFontSize(12);
@@ -21,28 +19,73 @@ export function generatePDF(district = "All") {
   doc.text(`Generated on: ${new Date().toLocaleString()}`, margin, y);
   y += 10;
 
-  // Data table
-  const lines = [
-    ["👥 Screened", summaryData.screened],
-    ["👓 R.E. Detected", summaryData.re_detected],
-    ["🩺 Spectacles Prescribed", summaryData.specs_prescribed],
-    ["👁️ Cataract Cases", summaryData.cataract_detected],
-    ["📊 Camps Done", `${summaryData.camps_done}/${summaryData.camps_allotted}`],
-    ["✅ Completion %", `${summaryData.completion_pct}%`],
-    ["📅 Avg Specs/Camp", summaryData.avg_specs_per_camp],
-    ["📈 Expected Specs/Camp", summaryData.expected_specs_per_camp],
-    ["🎯 Target Beneficiaries", summaryData.expected_target]
+  const summaryLines = [
+    ["👥 Screened", summary.screened],
+    ["👓 R.E. Detected", summary.re_detected],
+    ["🩺 Spectacles Prescribed", summary.specs_prescribed],
+    ["👁️ Cataract Cases", summary.cataract_detected],
+    ["📊 Camps Done", `${summary.camps_done}/${summary.camps_allotted}`],
+    ["✅ Completion %", `${summary.completion_pct}%`],
+    ["📅 Avg Specs/Camp", summary.avg_specs_per_camp],
+    ["📈 Expected Specs/Camp", summary.expected_specs_per_camp],
+    ["🎯 Target Beneficiaries", summary.expected_target]
   ];
 
-  lines.forEach(([label, value]) => {
+  summaryLines.forEach(([label, value]) => {
     doc.text(`${label}:`, margin, y);
     doc.setFont("helvetica", "bold");
     doc.text(String(value), margin + 80, y);
     doc.setFont("helvetica", "normal");
-    y += 8;
+    y += 7;
   });
 
-  doc.save(`Eye_Screening_Report_${district.replace(/\s+/g, "_")}.pdf`);
+  // ✨ Add block-wise table
+  const blockData = groupByBlock(data);
+  const tableRows = Object.keys(blockData).map(block => [
+    block,
+    blockData[block].screened,
+    blockData[block].re,
+    blockData[block].cataract
+  ]);
+
+  y += 5;
+  doc.autoTable({
+    head: [["Block", "Screened", "R.E. Detected", "Cataract"]],
+    body: tableRows,
+    startY: y,
+    theme: "striped",
+    headStyles: { fillColor: [99, 179, 237] },
+    styles: { fontSize: 10 },
+    margin: { left: margin, right: margin }
+  });
+
+  // Calculate new Y after table
+  y = doc.lastAutoTable.finalY + 10;
+
+  // ✨ Capture chart image from canvas
+  const chartCanvas = document.getElementById("barChart");
+  if (chartCanvas) {
+    html2canvas(chartCanvas).then(canvas => {
+      const imgData = canvas.toDataURL("image/png");
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const imgWidth = pageWidth - margin * 2;
+      const imgHeight = canvas.height * (imgWidth / canvas.width);
+
+      // Add image to the doc
+      doc.addImage(imgData, "PNG", margin, y, imgWidth, imgHeight);
+
+      // Save after everything
+      const fileName = `Eye_Screening_Report_${district.replace(/\s+/g, "_")}.pdf`;
+      doc.save(fileName);
+    }).catch(err => {
+      console.error("Chart rendering failed:", err);
+      doc.text("⚠️ Chart could not be rendered", margin, y);
+      doc.save(`Eye_Screening_Report_${district.replace(/\s+/g, "_")}.pdf`);
+    });
+  } else {
+    doc.text("⚠️ Chart not available", margin, y);
+    doc.save(`Eye_Screening_Report_${district.replace(/\s+/g, "_")}.pdf`);
+  }
 }
 
 window.generatePDF = generatePDF;
