@@ -10,11 +10,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script type="module">
   import { jsPDF } from 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-
   window.jspdf = { jsPDF };
   window.isPDFReady = true;
-  window.fetchData(); // or wrap in DOMContentLoaded if needed
 </script>
+
 
  
    
@@ -593,10 +592,8 @@ function generatePDF(district = "All") {
 }
   window.generatePDF = generatePDF;
 
+ window.fetchData(); // <-- This works because fetchData is now declared in global scope
 
-
-  // ✅ Instead of relying on DOMContentLoaded, directly call after setup
-  window.fetchData(); // <-- This works because fetchData is now declared in global scope
 </script>
 </body>
 </html>
