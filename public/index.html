@@ -285,7 +285,7 @@
     "Coochbehar": 1300
   };
 
-  async function fetchData() {
+ async function fetchData() {
   try {
     const res = await fetch("/api/data");
     const json = await res.json();
@@ -306,7 +306,7 @@
     populateDistricts();
     renderDashboard();
 
-    // ✅ Enable the report download buttons
+    // ✅ Enable the report buttons
     document.getElementById("downloadAllBtn").disabled = false;
     document.getElementById("downloadDistrictBtn").disabled = false;
 
@@ -314,7 +314,8 @@
     alert("⚠️ Failed to load data");
     console.error(error);
   }
-}
+} // ✅ This is the correct closing brace
+
 
 
     populateDistricts();
