@@ -16,7 +16,7 @@ export function generatePDF(district = "All") {
   // ✅ THEN use it
   const summary = window.summarizeData(data, district);
   const blockData = window.groupByBlock(data);
-  
+
   // 🧾 Add text summary
   doc.setFontSize(16);
   doc.text("Eye Screening Report", margin, y);
@@ -91,10 +91,6 @@ export function generatePDF(district = "All") {
     doc.save(`Eye_Screening_Report_${district.replace(/\s+/g, "_")}.pdf`);
   }
 }
-if (!window.airtableData || !Array.isArray(window.airtableData)) {
-  alert("⚠️ Data not loaded. Please wait a moment.");
-  return;
-}
 
+// ✅ Make it available to button onclick handler
 window.generatePDF = generatePDF;
-
