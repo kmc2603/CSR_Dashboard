@@ -319,7 +319,7 @@ window.airtableData = json.records.map(r => {
   };
 });
 
-
+    await fetchData();
     populateDistricts();
     console.log("✅ Populating districts from:", airtableData.map(d => d.district));
 
@@ -339,21 +339,25 @@ window.airtableData = json.records.map(r => {
 } // ✅ This is the correct closing brace
 
 
-
-  function populateDistricts() {
+function populateDistricts() {
   const sel = document.getElementById("districtFilter");
-  const districts = [...new Set(airtableData.map(d => d.district))].filter(d => d.trim() !== "");
+
+  // Get only unique, valid district names
+  const districts = [...new Set(airtableData.map(d => d.district))].filter(d => d && d.trim() !== "");
+
+  // Sort alphabetically
   const sortedDistricts = districts.sort((a, b) => a.localeCompare(b));
 
-  // Clear old options and re-add "All Districts"
   sel.innerHTML = `<option value="All">All Districts</option>`;
 
-  sortedDistricts.forEach(d => {
+  for (const d of sortedDistricts) {
     const opt = document.createElement("option");
-    opt.value = d;
-    opt.textContent = d;
+    opt.value = d.trim();
+    opt.textContent = d.trim();
     sel.appendChild(opt);
-  });
+  }
+
+  console.log("✅ Districts populated:", sortedDistricts);
 }
 
 
