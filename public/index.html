@@ -585,16 +585,14 @@ function generatePDF(district = "All") {
 }
   window.generatePDF = generatePDF;
 
-</script>
-  <script type="module">
+<script type="module">
   import jsPDFModule from 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-
   const { jsPDF } = jsPDFModule;
   window.jspdf = { jsPDF };
   window.isPDFReady = true;
 
-  // Now this works because fetchData() is already defined
-  fetchData(); 
+  // ✅ Instead of relying on DOMContentLoaded, directly call after setup
+  window.fetchData(); // <-- This works because fetchData is now declared in global scope
 </script>
 </body>
 </html>
