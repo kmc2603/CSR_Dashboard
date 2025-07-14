@@ -1,4 +1,6 @@
 export function generatePDF(district = "All") {
+  const summarizeData = window.summarizeData;
+  const groupByBlock = window.groupByBlock;
   const doc = new window.jspdf.jsPDF();
   const margin = 15;
   let y = margin;
