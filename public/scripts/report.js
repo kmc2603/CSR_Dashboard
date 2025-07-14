@@ -8,13 +8,15 @@ export function generatePDF(district = "All") {
   const margin = 15;
   let y = margin;
 
+  // ✅ FIRST define 'data'
   const data = district === "All"
     ? window.airtableData
     : window.airtableData.filter(d => d.district === district);
 
+  // ✅ THEN use it
   const summary = window.summarizeData(data, district);
   const blockData = window.groupByBlock(data);
-
+  
   // 🧾 Add text summary
   doc.setFontSize(16);
   doc.text("Eye Screening Report", margin, y);
