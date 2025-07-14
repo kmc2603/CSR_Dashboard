@@ -330,6 +330,7 @@ window.airtableData = json.records.map(r => {
     // ✅ Enable the report buttons
     document.getElementById("downloadAllBtn").disabled = false;
     document.getElementById("downloadDistrictBtn").disabled = false;
+    console.log("✅ Enabling download buttons");
 
   } catch (error) {
     alert("⚠️ Failed to load data");
@@ -607,6 +608,9 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("🚀 DOM ready — Fetching data");
   fetchData(); // drop `window.` here
 });
+  console.log("✅ Records loaded:", airtableData.length);
+console.log("✅ Districts:", [...new Set(airtableData.map(d => d.district))]);
+
 
 
 </script>
