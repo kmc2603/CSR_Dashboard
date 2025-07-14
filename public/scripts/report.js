@@ -1,6 +1,4 @@
 export function generatePDF(district = "All") {
- const summary = window.summarizeData(data, district);
-const blockData = window.groupByBlock(data);
   const doc = new window.jspdf.jsPDF();
   const margin = 15;
   let y = margin;
@@ -9,7 +7,8 @@ const blockData = window.groupByBlock(data);
     ? window.airtableData
     : window.airtableData.filter(d => d.district === district);
 
-  const summary = summarizeData(data, district);
+  const summary = window.summarizeData(data, district);
+  const blockData = window.groupByBlock(data);
 
   // 🧾 Add text summary
   doc.setFontSize(16);
@@ -41,8 +40,7 @@ const blockData = window.groupByBlock(data);
     y += 7;
   });
 
-  // ✨ Add block-wise table
-  const blockData = groupByBlock(data);
+  // 📋 Add block-wise table
   const tableRows = Object.keys(blockData).map(block => [
     block,
     blockData[block].screened,
@@ -61,10 +59,9 @@ const blockData = window.groupByBlock(data);
     margin: { left: margin, right: margin }
   });
 
-  // Calculate new Y after table
   y = doc.lastAutoTable.finalY + 10;
 
-  // ✨ Capture chart image from canvas
+  // 📊 Capture bar chart as image
   const chartCanvas = document.getElementById("barChart");
   if (chartCanvas) {
     html2canvas(chartCanvas).then(canvas => {
@@ -73,10 +70,8 @@ const blockData = window.groupByBlock(data);
       const imgWidth = pageWidth - margin * 2;
       const imgHeight = canvas.height * (imgWidth / canvas.width);
 
-      // Add image to the doc
       doc.addImage(imgData, "PNG", margin, y, imgWidth, imgHeight);
 
-      // Save after everything
       const fileName = `Eye_Screening_Report_${district.replace(/\s+/g, "_")}.pdf`;
       doc.save(fileName);
     }).catch(err => {
@@ -91,3 +86,4 @@ const blockData = window.groupByBlock(data);
 }
 
 window.generatePDF = generatePDF;
+
