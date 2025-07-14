@@ -90,5 +90,3 @@ function generatePDF(district = "All") {
 }
 
 window.generatePDF = generatePDF;
-
-
