@@ -318,16 +318,6 @@
 
 
 
-    populateDistricts();
-    renderDashboard();
-  } catch (error) {
-    alert("⚠️ Failed to load data");
-    console.error(error);
-  }
-}
-
-
-
   function populateDistricts() {
   const sel = document.getElementById("districtFilter");
   const districts = [...new Set(airtableData.map(d => d.district))].filter(d => d.trim() !== "");
