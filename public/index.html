@@ -516,7 +516,7 @@ districtSelect.addEventListener("change", (e) => {
   setTimeout(() => e.target.blur(), 10); // prevent scrolling after selection
 });
 
-
+fetchData();
 function generatePDF(district = "All") {
   if (!window.jspdf || !window.jspdf.jsPDF || !window.airtableData) {
     alert("⚠️ jsPDF or data not ready.");
