@@ -7,16 +7,15 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <script>
-    window.isPDFReady = false;
- window.onload = function () {
-  import('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js')
-    .then(jsPDFModule => {
-      window.jspdf = jsPDFModule.jspdf;
-      window.isPDFReady = true;
-      fetchData();
-    });
-};
+    <script type="module">
+  import { jsPDF } from 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+
+  window.jspdf = { jsPDF };  // ✅ Attach properly
+  window.isPDFReady = true;
+
+  fetchData();  // ✅ Only call fetchData after jsPDF is ready
 </script>
+
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
@@ -301,19 +300,19 @@
     const res = await fetch("/api/data");
     const json = await res.json();
 
-    airtableData = json.records.map(r => {
-      console.log("Fetched data:", airtableData);
-      const f = r.fields;
-      return {
-        district: f["Name of the District"] || "",
-        block: f["Block at which camp held"] || "",
-        camp_date: f["Date of the Camp Being Held"] || "",
-        screened: +f["No. of persons Screened"] || 0,
-        re_detected: +f["No. of person detected with R.E."] || 0,
-        specs_prescribed: +f["No. of Spectacles prescribed"] || 0,
-        cataract_detected: +f["No. of person detected with Cataract"] || 0
-      };
-    });
+window.airtableData = json.records.map(r => {
+  const f = r.fields;
+  return {
+    district: f["Name of the District"] || "",
+    block: f["Block at which camp held"] || "",
+    camp_date: f["Date of the Camp Being Held"] || "",
+    screened: +f["No. of persons Screened"] || 0,
+    re_detected: +f["No. of person detected with R.E."] || 0,
+    specs_prescribed: +f["No. of Spectacles prescribed"] || 0,
+    cataract_detected: +f["No. of person detected with Cataract"] || 0
+  };
+});
+
 
     populateDistricts();
     renderDashboard();
