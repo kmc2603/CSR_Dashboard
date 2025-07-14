@@ -530,6 +530,13 @@ districtSelect.addEventListener("change", (e) => {
 
 fetchData();
 function generatePDF(district = "All") {
+  console.log("🧪 DEBUG INFO:");
+  console.log("window.isPDFReady:", window.isPDFReady);
+  console.log("window.jspdf:", window.jspdf);
+  console.log("window.jspdf.jsPDF:", window.jspdf?.jsPDF);
+  console.log("window.airtableData:", window.airtableData);
+  console.log("airtableData.length:", window.airtableData?.length);
+
   if (!window.isPDFReady || !window.jspdf || !window.jspdf.jsPDF || !window.airtableData || airtableData.length === 0) {
     alert("⚠️ jsPDF or data not ready.");
     return;
