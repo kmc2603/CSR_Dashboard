@@ -321,7 +321,11 @@ window.airtableData = json.records.map(r => {
 
 
     populateDistricts();
+    console.log("✅ Populating districts from:", airtableData.map(d => d.district));
+
     renderDashboard();
+    console.log("✅ Render dashboard for district:", district);
+
 
     // ✅ Enable the report buttons
     document.getElementById("downloadAllBtn").disabled = false;
@@ -599,9 +603,11 @@ function generatePDF(district = "All") {
   doc.save(`${district}_CSR_Eye_Camp_Report.pdf`);
 }
   window.generatePDF = generatePDF;
-window.addEventListener("DOMContentLoaded", () => {
-  window.fetchData();
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("🚀 DOM ready — Fetching data");
+  fetchData(); // drop `window.` here
 });
+
 
 </script>
 </body>
