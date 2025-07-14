@@ -301,7 +301,7 @@
         cataract_detected: +f["No. of person detected with Cataract"] || 0
       };
     });
-
+ 
     populateDistricts();
     renderDashboard();
   } catch (error) {
@@ -310,7 +310,7 @@
   }
 }
 
-
+window.airtableData = airtableData; // ✅ Make global
 
   function populateDistricts() {
   const sel = document.getElementById("districtFilter");
