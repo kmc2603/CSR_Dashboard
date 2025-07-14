@@ -1,38 +1,48 @@
-// ✅ Exported function to be used on button click in HTML
 export function generatePDF(district = "All") {
   const doc = new window.jspdf.jsPDF();
+  const margin = 15;
+  let y = margin;
 
-  // Add a title
+  const summaryData = summarizeData(
+    district === "All"
+      ? window.airtableData
+      : window.airtableData.filter(d => d.district === district),
+    district
+  );
+
+  // Header
   doc.setFontSize(16);
-  doc.text(`Eye Screening Report`, 10, 15);
+  doc.setTextColor(40);
+  doc.text("Eye Screening Report", margin, y);
+  y += 8;
   doc.setFontSize(12);
-  doc.text(`District: ${district}`, 10, 25);
-  doc.text(`Generated on: ${new Date().toLocaleString()}`, 10, 32);
+  doc.text(`District: ${district}`, margin, y);
+  y += 6;
+  doc.text(`Generated on: ${new Date().toLocaleString()}`, margin, y);
+  y += 10;
 
-  // Capture summary cards
-  const summaryEl = document.getElementById("summaryCards");
+  // Data table
+  const lines = [
+    ["👥 Screened", summaryData.screened],
+    ["👓 R.E. Detected", summaryData.re_detected],
+    ["🩺 Spectacles Prescribed", summaryData.specs_prescribed],
+    ["👁️ Cataract Cases", summaryData.cataract_detected],
+    ["📊 Camps Done", `${summaryData.camps_done}/${summaryData.camps_allotted}`],
+    ["✅ Completion %", `${summaryData.completion_pct}%`],
+    ["📅 Avg Specs/Camp", summaryData.avg_specs_per_camp],
+    ["📈 Expected Specs/Camp", summaryData.expected_specs_per_camp],
+    ["🎯 Target Beneficiaries", summaryData.expected_target]
+  ];
 
-  if (!summaryEl) {
-    alert("📛 Summary section not found!");
-    return;
-  }
-
-  html2canvas(summaryEl).then(canvas => {
-    const imgData = canvas.toDataURL("image/png");
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const imgWidth = pageWidth - 20;
-    const imgHeight = canvas.height * (imgWidth / canvas.width);
-
-    doc.addImage(imgData, "PNG", 10, 40, imgWidth, imgHeight);
-
-    // Save the file
-    const fileName = `Eye_Screening_Report_${district.replace(/\s+/g, "_")}.pdf`;
-    doc.save(fileName);
-  }).catch(err => {
-    console.error("Error generating canvas:", err);
-    alert("❌ Failed to generate report. See console for details.");
+  lines.forEach(([label, value]) => {
+    doc.text(`${label}:`, margin, y);
+    doc.setFont("helvetica", "bold");
+    doc.text(String(value), margin + 80, y);
+    doc.setFont("helvetica", "normal");
+    y += 8;
   });
+
+  doc.save(`Eye_Screening_Report_${district.replace(/\s+/g, "_")}.pdf`);
 }
 
-// ✅ Make available globally for inline onclick="generatePDF(...)"
 window.generatePDF = generatePDF;
