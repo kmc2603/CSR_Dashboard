@@ -1,11 +1,6 @@
-// 📁 scripts/report.js
-
-import jsPDF from "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
-import autoTable from "https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js";
-
 export async function generatePDF(district = "All") {
-  if (!window.airtableData || !Array.isArray(window.airtableData)) {
-    alert("⚠️ Data not ready. Please wait a moment.");
+  if (!window.jspdf || !window.jspdf.jsPDF || !window.airtableData) {
+    alert("⚠️ jsPDF or data not ready.");
     return;
   }
 
@@ -20,10 +15,9 @@ export async function generatePDF(district = "All") {
   const summary = window.summarizeData(data, district);
   const blockData = window.groupByBlock(data);
 
-  // 🧾 Title and Header
+  // Title
   doc.setFontSize(18);
-  doc.setTextColor(40);
-  doc.text("Eye Screening Camp Summary Report", doc.internal.pageSize.getWidth() / 2, y, { align: 'center' });
+  doc.text("Eye Screening Summary Report", doc.internal.pageSize.getWidth() / 2, y, { align: 'center' });
   y += 10;
 
   doc.setFontSize(12);
@@ -32,7 +26,6 @@ export async function generatePDF(district = "All") {
   doc.text(`Generated on: ${new Date().toLocaleString()}`, margin, y);
   y += 10;
 
-  // 📌 Summary Stats
   const summaryData = [
     ["Screened", summary.screened],
     ["R.E. Detected", summary.re_detected],
@@ -45,19 +38,19 @@ export async function generatePDF(district = "All") {
     ["Target Beneficiaries", summary.expected_target],
   ];
 
-  autoTable(doc, {
+  window.jspdf.autoTable(doc, {
     startY: y,
     head: [["Metric", "Value"]],
     body: summaryData,
     theme: "grid",
     headStyles: { fillColor: [56, 108, 174], halign: "center" },
-    styles: { halign: "left", fontSize: 10 },
+    styles: { fontSize: 10 },
     margin: { left: margin, right: margin },
   });
 
   y = doc.lastAutoTable.finalY + 10;
 
-  // 📊 Block or District Table
+  // All Districts or Block-wise Table
   if (district === "All") {
     const allDistricts = [...new Set(window.airtableData.map(d => d.district))];
     const rows = allDistricts.map(dist => {
@@ -66,7 +59,7 @@ export async function generatePDF(district = "All") {
       return [dist, sum.screened, sum.re_detected, sum.specs_prescribed, sum.cataract_detected, `${sum.completion_pct}%`];
     });
 
-    autoTable(doc, {
+    window.jspdf.autoTable(doc, {
       startY: y,
       head: [["District", "Screened", "R.E.", "Spectacles", "Cataracts", "Completion %"]],
       body: rows,
@@ -75,18 +68,19 @@ export async function generatePDF(district = "All") {
       styles: { fontSize: 9 },
       margin: { left: margin, right: margin }
     });
+
   } else {
-    const blockRows = Object.keys(blockData).map(block => [
+    const rows = Object.keys(blockData).map(block => [
       block,
       blockData[block].screened,
       blockData[block].re,
       blockData[block].cataract
     ]);
 
-    autoTable(doc, {
+    window.jspdf.autoTable(doc, {
       startY: y,
       head: [["Block", "Screened", "R.E.", "Cataract"]],
-      body: blockRows,
+      body: rows,
       theme: "striped",
       headStyles: { fillColor: [94, 53, 177] },
       styles: { fontSize: 9 },
