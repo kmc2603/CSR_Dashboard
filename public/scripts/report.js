@@ -1,3 +1,6 @@
+import jsPDF from "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+import autoTable from "https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js";
+
 export async function generatePDF(district = "All") {
   if (!window.jspdf || !window.jspdf.jsPDF || !window.airtableData) {
     alert("⚠️ jsPDF or data not ready.");
