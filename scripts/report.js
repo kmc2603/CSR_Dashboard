@@ -25,3 +25,18 @@ window.generatePDF = async function (district) {
   pdf.save(`${district}_EyeCampReport.pdf`);
 };
 
+if (district === "All") {
+  const allDistricts = [...new Set(window.airtableData.map(d => d.district))];
+  for (let i = 0; i < allDistricts.length; i++) {
+    if (i > 0) pdf.addPage();
+    const d = allDistricts[i];
+    await renderDashboard(d); // from global scope
+    await new Promise(resolve => setTimeout(resolve, 500)); // wait to render
+
+    // Capture and add
+    const canvas = await html2canvas(document.querySelector("#summaryCards"));
+    const img = canvas.toDataURL("image/png");
+    pdf.addImage(img, "PNG", margin, 20, 190, 60);
+  }
+  await renderDashboard("All"); // restore
+}
