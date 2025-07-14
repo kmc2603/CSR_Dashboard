@@ -314,8 +314,9 @@
     document.getElementById("downloadAllBtn").disabled = false;
     document.getElementById("downloadDistrictBtn").disabled = false;
   } catch (error) {
-    alert("⚠️ Failed to load data");
     console.error(error);
+    alert("⚠️ Failed to load data");
+    return false;
   }
 }
 
