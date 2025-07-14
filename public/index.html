@@ -516,26 +516,21 @@ window.groupByBlock = groupByBlock;
 // Existing renderDashboard function here...
 
 <script>
-  const districtSelect = document.getElementById("districtFilter");
-  let lastSelectedDistrict = null;
+const districtSelect = document.getElementById("districtFilter");
+let lastSelectedDistrict = null;
 
-  districtSelect.addEventListener("input", (e) => {
-    lastSelectedDistrict = e.target.value;
-  });
+districtSelect.addEventListener("input", (e) => {
+  lastSelectedDistrict = e.target.value;
+});
 
-  districtSelect.addEventListener("change", (e) => {
-    const value = e.target.value;
-    console.log("Window data available?", window.airtableData?.length);
-    renderDashboard(value);
-    setTimeout(() => e.target.blur(), 10); // prevent scrolling after selection
-  });
+districtSelect.addEventListener("change", (e) => {
+  const value = e.target.value;
+  renderDashboard(value);
+  setTimeout(() => e.target.blur(), 10); // prevent scrolling after selection
+});
 
-  // ✅ Fetch data, then load report.js dynamically
-  fetchData().then(() => {
-    const script = document.createElement("script");
-    script.src = "scripts/report.js";
-    document.body.appendChild(script);
-  });
+fetchData();
+
 </script>
 </body>
 </html>
