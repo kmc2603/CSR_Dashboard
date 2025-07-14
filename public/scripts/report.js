@@ -1,7 +1,4 @@
-import jsPDF from "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
-import autoTable from "https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js";
-
-export async function generatePDF(district = "All") {
+function generatePDF(district = "All") {
   if (!window.jspdf || !window.jspdf.jsPDF || !window.airtableData) {
     alert("⚠️ jsPDF or data not ready.");
     return;
@@ -18,7 +15,6 @@ export async function generatePDF(district = "All") {
   const summary = window.summarizeData(data, district);
   const blockData = window.groupByBlock(data);
 
-  // Title
   doc.setFontSize(18);
   doc.text("Eye Screening Summary Report", doc.internal.pageSize.getWidth() / 2, y, { align: 'center' });
   y += 10;
@@ -41,7 +37,7 @@ export async function generatePDF(district = "All") {
     ["Target Beneficiaries", summary.expected_target],
   ];
 
-  window.jspdf.autoTable(doc, {
+  autoTable(doc, {
     startY: y,
     head: [["Metric", "Value"]],
     body: summaryData,
@@ -53,7 +49,6 @@ export async function generatePDF(district = "All") {
 
   y = doc.lastAutoTable.finalY + 10;
 
-  // All Districts or Block-wise Table
   if (district === "All") {
     const allDistricts = [...new Set(window.airtableData.map(d => d.district))];
     const rows = allDistricts.map(dist => {
@@ -62,7 +57,7 @@ export async function generatePDF(district = "All") {
       return [dist, sum.screened, sum.re_detected, sum.specs_prescribed, sum.cataract_detected, `${sum.completion_pct}%`];
     });
 
-    window.jspdf.autoTable(doc, {
+    autoTable(doc, {
       startY: y,
       head: [["District", "Screened", "R.E.", "Spectacles", "Cataracts", "Completion %"]],
       body: rows,
@@ -80,7 +75,7 @@ export async function generatePDF(district = "All") {
       blockData[block].cataract
     ]);
 
-    window.jspdf.autoTable(doc, {
+    autoTable(doc, {
       startY: y,
       head: [["Block", "Screened", "R.E.", "Cataract"]],
       body: rows,
@@ -95,3 +90,4 @@ export async function generatePDF(district = "All") {
 }
 
 window.generatePDF = generatePDF;
+
