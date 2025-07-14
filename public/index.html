@@ -11,7 +11,7 @@
  window.onload = function () {
   import('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js')
     .then(jsPDFModule => {
-      window.jspdf = jsPDFModule;
+      window.jspdf = jsPDFModule.jspdf;
       window.isPDFReady = true;
       fetchData();
     });
@@ -302,6 +302,7 @@
     const json = await res.json();
 
     airtableData = json.records.map(r => {
+      console.log("Fetched data:", airtableData);
       const f = r.fields;
       return {
         district: f["Name of the District"] || "",
