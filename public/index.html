@@ -7,13 +7,15 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <script>
-  window.onload = function () {
-    import('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js')
-      .then(jsPDFModule => {
-        window.jspdf = jsPDFModule;
-        fetchData(); // now start after jsPDF is ready
-      });
-  };
+    window.isPDFReady = false;
+ window.onload = function () {
+  import('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js')
+    .then(jsPDFModule => {
+      window.jspdf = jsPDFModule;
+      window.isPDFReady = true;
+      fetchData();
+    });
+};
 </script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -527,7 +529,7 @@ districtSelect.addEventListener("change", (e) => {
 
 fetchData();
 function generatePDF(district = "All") {
-  if (!window.jspdf || !window.jspdf.jsPDF || !window.airtableData) {
+  if (!window.isPDFReady || !window.jspdf || !window.jspdf.jsPDF || !window.airtableData || airtableData.length === 0) {
     alert("⚠️ jsPDF or data not ready.");
     return;
   }
