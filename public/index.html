@@ -523,13 +523,11 @@ districtSelect.addEventListener("change", (e) => {
 });
 
 
-  fetchData().then(() => {
-  // Now that data is ready, load the report script
-  const script = document.createElement("script");
-  script.type = "module";
-  script.src = "scripts/report.js";
-  document.body.appendChild(script);
-});
+ fetchData().then(() => {
+    const script = document.createElement("script");
+    script.src = "scripts/report.js";
+    document.body.appendChild(script);
+  });
 
 
 </script>
