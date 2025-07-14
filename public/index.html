@@ -509,22 +509,27 @@ window.groupByBlock = groupByBlock;
 }
 // Existing renderDashboard function here...
 
-const districtSelect = document.getElementById("districtFilter");
-let lastSelectedDistrict = null;
+<script src="scripts/report.js"></script>
+<script>
+  // Ensure report.js is loaded before using functions like generatePDF()
 
-districtSelect.addEventListener("input", (e) => {
-  lastSelectedDistrict = e.target.value;
-});
+  const districtSelect = document.getElementById("districtFilter");
+  let lastSelectedDistrict = null;
 
-districtSelect.addEventListener("change", (e) => {
-  const value = e.target.value;
-  renderDashboard(value);
-  setTimeout(() => e.target.blur(), 10); // prevent scrolling after selection
-});
+  districtSelect.addEventListener("input", (e) => {
+    lastSelectedDistrict = e.target.value;
+  });
+
+  districtSelect.addEventListener("change", (e) => {
+    const value = e.target.value;
+    console.log("Window data available?", window.airtableData?.length);
+    renderDashboard(value);
+    setTimeout(() => e.target.blur(), 10); // prevent scrolling after selection
+  });
+
+  // ✅ Now fetch data after all functions and listeners are defined
   fetchData();
 </script>
-  
-<script src="scripts/report.js"></script>
 </body>
 </html>
 
