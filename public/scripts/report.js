@@ -91,6 +91,10 @@ export function generatePDF(district = "All") {
     doc.save(`Eye_Screening_Report_${district.replace(/\s+/g, "_")}.pdf`);
   }
 }
+if (!window.airtableData || !Array.isArray(window.airtableData)) {
+  alert("⚠️ Data not loaded. Please wait a moment.");
+  return;
+}
 
 window.generatePDF = generatePDF;
 
