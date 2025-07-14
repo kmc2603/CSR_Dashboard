@@ -583,6 +583,7 @@ function generatePDF(district = "All") {
 
   doc.save(`${district}_CSR_Eye_Camp_Report.pdf`);
 }
+  window.generatePDF = generatePDF;
 fetchData();
 </script>
 </body>
