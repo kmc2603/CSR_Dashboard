@@ -245,6 +245,11 @@
   </select>
 </div>
 
+  <div style="text-align:center; margin-bottom:2rem;">
+  <button onclick="generatePDF('All')" style="margin: 0.5rem;">📥 Download All-District Report</button>
+  <button onclick="generatePDF(document.getElementById('districtFilter').value)" style="margin: 0.5rem;">📥 Download This District Report</button>
+</div>
+
 
   <div class="cards-container" id="summaryCards"></div>
 
@@ -502,6 +507,7 @@ districtSelect.addEventListener("change", (e) => {
 });
 
 fetchData();
+<script type="module" src="/scripts/report.js"></script>
 
 </script>
 </body>
