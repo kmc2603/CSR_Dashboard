@@ -522,16 +522,9 @@ districtSelect.addEventListener("change", (e) => {
   setTimeout(() => e.target.blur(), 10); // prevent scrolling after selection
 });
 
-
- fetchData().then(() => {
-    const script = document.createElement("script");
-    script.src = "scripts/report.js";
-    document.body.appendChild(script);
-  });
-
-
 </script>
   
+<script src="scripts/report.js"></script>
 </body>
 </html>
 
