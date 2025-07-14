@@ -294,7 +294,7 @@
     const res = await fetch("/api/data");
     const json = await res.json();
 
-    airtableData = json.records.map(r => {
+    window.airtableData = json.records.map(r => {
       const f = r.fields;
       return {
         district: f["Name of the District"] || "",
@@ -319,11 +319,10 @@
   }
 }
 
-window.airtableData = airtableData; // ✅ Make global
 
   function populateDistricts() {
   const sel = document.getElementById("districtFilter");
-  const districts = [...new Set(airtableData.map(d => d.district))].filter(d => d.trim() !== "");
+  const districts = [...new Set(window.airtableData.map(d => d.district))];
   const sortedDistricts = districts.sort((a, b) => a.localeCompare(b));
 
   // Clear old options and re-add "All Districts"
