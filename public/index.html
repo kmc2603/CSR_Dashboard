@@ -6,16 +6,15 @@
   <title>Free Eye Screening Camps Dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-  <script>
-    <script type="module">
+  <script type="module">
   import { jsPDF } from 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
 
-  window.jspdf = { jsPDF };  // ✅ Attach properly
+  window.jspdf = { jsPDF };
   window.isPDFReady = true;
 
-  fetchData();  // ✅ Only call fetchData after jsPDF is ready
+  // 🔥 Call fetchData ONLY after jsPDF is ready
+  fetchData();
 </script>
-
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
