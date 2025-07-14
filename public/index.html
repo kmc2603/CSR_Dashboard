@@ -355,7 +355,7 @@
       expected_specs_per_camp: Math.round(target / totalCampsAllotted)
     };
   }
-
+window.summarizeData = summarizeData;
   function groupByBlock(data) {
     const map = {};
     data.forEach(d => {
@@ -366,6 +366,7 @@
     });
     return map;
   }
+window.groupByBlock = groupByBlock;
 
   function groupByDate(data) {
     const map = {};
