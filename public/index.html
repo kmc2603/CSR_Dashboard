@@ -511,8 +511,6 @@ window.groupByBlock = groupByBlock;
 
 <script src="scripts/report.js"></script>
 <script>
-  // Ensure report.js is loaded before using functions like generatePDF()
-
   const districtSelect = document.getElementById("districtFilter");
   let lastSelectedDistrict = null;
 
@@ -527,8 +525,12 @@ window.groupByBlock = groupByBlock;
     setTimeout(() => e.target.blur(), 10); // prevent scrolling after selection
   });
 
-  // ✅ Now fetch data after all functions and listeners are defined
-  fetchData();
+  // ✅ Fetch data, then load report.js dynamically
+  fetchData().then(() => {
+    const script = document.createElement("script");
+    script.src = "scripts/report.js";
+    document.body.appendChild(script);
+  });
 </script>
 </body>
 </html>
