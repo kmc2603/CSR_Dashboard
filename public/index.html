@@ -249,10 +249,15 @@
   </select>
 </div>
 
-  <div style="text-align:center; margin-bottom:2rem;">
-  <button onclick="generatePDF('All')" style="margin: 0.5rem;">📥 Download All-District Report</button>
-  <button onclick="generatePDF(document.getElementById('districtFilter').value)" style="margin: 0.5rem;">📥 Download This District Report</button>
+ <div style="text-align:center; margin-bottom:2rem;">
+  <button id="downloadAllBtn" disabled onclick="generatePDF('All')" style="margin: 0.5rem;">
+    📥 Download All-District Report
+  </button>
+  <button id="downloadDistrictBtn" disabled onclick="generatePDF(document.getElementById('districtFilter').value)" style="margin: 0.5rem;">
+    📥 Download This District Report
+  </button>
 </div>
+
 
 
   <div class="cards-container" id="summaryCards"></div>
@@ -304,6 +309,10 @@
  
     populateDistricts();
     renderDashboard();
+
+       // ✅ Enable buttons now
+    document.getElementById("downloadAllBtn").disabled = false;
+    document.getElementById("downloadDistrictBtn").disabled = false;
   } catch (error) {
     alert("⚠️ Failed to load data");
     console.error(error);
