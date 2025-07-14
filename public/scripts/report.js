@@ -37,7 +37,7 @@ function generatePDF(district = "All") {
     ["Target Beneficiaries", summary.expected_target],
   ];
 
-  doc.autoTable(doc, {
+  doc.autoTable({
     startY: y,
     head: [["Metric", "Value"]],
     body: summaryData,
@@ -57,7 +57,7 @@ function generatePDF(district = "All") {
       return [dist, sum.screened, sum.re_detected, sum.specs_prescribed, sum.cataract_detected, `${sum.completion_pct}%`];
     });
 
-    doc.autoTable(doc, {
+    doc.autoTable({
       startY: y,
       head: [["District", "Screened", "R.E.", "Spectacles", "Cataracts", "Completion %"]],
       body: rows,
@@ -75,7 +75,7 @@ function generatePDF(district = "All") {
       blockData[block].cataract
     ]);
 
-    doc.autoTable(doc, {
+    doc.autoTable({
       startY: y,
       head: [["Block", "Screened", "R.E.", "Cataract"]],
       body: rows,
@@ -90,4 +90,5 @@ function generatePDF(district = "All") {
 }
 
 window.generatePDF = generatePDF;
+
 
