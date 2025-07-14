@@ -22,6 +22,8 @@
     // Ensure jsPDF is available globally
     window.jspdf = window.jspdf || {};
     window.jspdf.jsPDF = window.jspdf.jsPDF || window.jspdf.jsPDF;
+    window.jspdf.jsPDF.API.autoTable = window.jspdf.jsPDF.API.autoTable;
+
     window.isPDFReady = true;
   </script>
 
@@ -601,8 +603,9 @@ function generatePDF(district = "All") {
   doc.save(`${district}_CSR_Eye_Camp_Report.pdf`);
 }
   window.generatePDF = generatePDF;
-
- window.fetchData(); // <-- This works because fetchData is now declared in global scope
+window.addEventListener("DOMContentLoaded", () => {
+  window.fetchData();
+});
 
 </script>
 </body>
