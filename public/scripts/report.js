@@ -1,4 +1,9 @@
 export function generatePDF(district = "All") {
+  if (!window.airtableData || !Array.isArray(window.airtableData)) {
+    alert("⚠️ Data is not loaded yet. Please wait a few seconds and try again.");
+    return;
+  }
+
   const doc = new window.jspdf.jsPDF();
   const margin = 15;
   let y = margin;
