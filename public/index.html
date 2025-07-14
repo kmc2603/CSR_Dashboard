@@ -293,8 +293,12 @@
 
   async function fetchData() {
   try {
-    const res = await fetch("/api/data");
+    const res = await fetch(`${window.location.origin}/api/data`);
     const json = await res.json();
+   
+console.log("✅ Fetched Records:", json.records.length);
+console.log("✅ Raw data sample:", json.records[0]); // NEW
+
 
     window.airtableData = json.records.map(r => {
       const f = r.fields;
@@ -482,7 +486,9 @@ window.groupByBlock = groupByBlock;
     }
   }
 
+
   function renderDashboard(district = "All") {
+    if (!airtableData || airtableData.length === 0) return;
   const data = district === "All"
     ? airtableData
     : airtableData.filter(d => d.district === district);
