@@ -127,6 +127,23 @@
    #completionChart {
   max-width: 500px;
 }
+    #completionChartWrapper.all-districts {
+  max-width: 900px;
+  height: 400px;
+  margin: 0 auto;
+}
+
+#completionChartWrapper.specific-district {
+  max-width: 400px;
+  height: 300px;
+  margin: 0 auto;
+}
+
+#completionChart {
+  width: 100% !important;
+  height: 100% !important;
+}
+
     @keyframes fadeInDown {
       from { opacity: 0; transform: translateY(-30px); }
       to { opacity: 1; transform: translateY(0); }
@@ -161,6 +178,7 @@
       transform: scale(1.1);
       box-shadow: 0 8px 25px rgba(0,0,0,0.2);
     }
+    
 
     @media (max-width: 600px) {
       body {
@@ -329,7 +347,10 @@
   <canvas id="lineChart"></canvas>
 
   <h2 style="text-align:center; margin-top: 2rem;">✅ Completion Rate toward Target Beneficiaries</h2>
+ <div id="completionChartWrapper">
   <canvas id="completionChart"></canvas>
+</div>
+
 
 <script>
 
@@ -508,6 +529,9 @@
   }
 
   function renderCompletionChart(data, district) {
+    const wrapper = document.getElementById("completionChartWrapper");
+wrapper.className = district === "All" ? "all-districts" : "specific-district";
+
   const ctx = document.getElementById("completionChart").getContext("2d");
   if (completionChartInstance) completionChartInstance.destroy();
 
@@ -523,6 +547,7 @@
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         scales: {
           y: {
             beginAtZero: true,
