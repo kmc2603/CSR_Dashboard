@@ -515,9 +515,14 @@
 }
 
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    fetchData();
+  document.addEventListener("DOMContentLoaded", async () => {
+    await fetchData();
 
+    const script = document.createElement("script");
+    script.src = "/scripts/report.js";
+    document.body.appendChild(script);
+
+    // button bindings
     document.getElementById("downloadAllBtn").addEventListener("click", () => {
       if (window.generatePDF) generatePDF("All");
       else alert("⚠️ PDF generation not available.");
@@ -528,23 +533,15 @@
       if (window.generatePDF) generatePDF(district);
       else alert("⚠️ PDF generation not available.");
     });
- const districtSelect = document.getElementById("districtFilter");
-    let lastSelectedDistrict = null;
 
-    districtSelect.addEventListener("input", (e) => {
-      lastSelectedDistrict = e.target.value;
-    });
-
+    const districtSelect = document.getElementById("districtFilter");
     districtSelect.addEventListener("change", (e) => {
-      const value = e.target.value;
-      renderDashboard(value);
+      renderDashboard(e.target.value);
       setTimeout(() => e.target.blur(), 10);
     });
   });
 </script>
-   
- 
+<script src="/scripts/report.js"></script>
 
-  <script src="/scripts/report.js"></script>
 </body>
 </html>
