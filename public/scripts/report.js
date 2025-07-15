@@ -64,7 +64,7 @@ if (!window.airtableData || window.airtableData.length === 0) {
 
     doc.autoTable({
       startY: y,
-      head: [["District", "Screened", "R.E.", "Spectacles", "Cataracts", "Completion %"]],
+      head: [["District", "Screened", "R.E. detected", "Spectacle Prescribed", "Cataract Identified", "Completion %"]],
       body: rows,
       theme: "striped",
       headStyles: { fillColor: [46, 125, 50] },
