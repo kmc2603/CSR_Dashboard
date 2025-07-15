@@ -441,7 +441,7 @@
     Object.keys(districtTargets).forEach(d => {
       const filtered = airtableData.filter(x => x.district === d);
       const total = filtered.reduce((s, x) => s + x.specs_prescribed, 0);
-      result[d] = Math.min(100, Math.round((total / districtTargets[d]) * 100)) || 0;
+      result[d] = Math.round((total / districtTargets[d]) * 100) || 0;
     });
     return result;
   }
@@ -494,39 +494,73 @@
   }
 
   function renderCompletionChart(data, district) {
-    const ctx = document.getElementById("completionChart").getContext("2d");
-    if (completionChartInstance) completionChartInstance.destroy();
+  const ctx = document.getElementById("completionChart").getContext("2d");
+  if (completionChartInstance) completionChartInstance.destroy();
 
-    if (district === "All") {
-      const completionData = groupDistrictCompletion();
-      const labels = Object.keys(completionData);
-      const values = Object.values(completionData);
-      completionChartInstance = new Chart(ctx, {
-        type: "bar",
-        data: {
-          labels,
-          datasets: [{ label: "Completion %", data: values, backgroundColor: "#3b82f6" }]
-        },
-        options: {
-          responsive: true,
-          scales: { y: { beginAtZero: true, max: 100, ticks: { callback: v => v + "%" } } }
+  if (district === "All") {
+    const completionData = groupDistrictCompletion();
+    const labels = Object.keys(completionData);
+    const values = Object.values(completionData);
+    completionChartInstance = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [{ label: "Completion %", data: values, backgroundColor: "#3b82f6" }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            // Allow values over 100%
+            suggestedMax: Math.max(...values) > 100 ? Math.max(...values) + 10 : 100,
+            ticks: { callback: v => v + "%" }
+          }
         }
-      });
-    } else {
-      const total = summarizeData(data, district).completion_pct;
-      completionChartInstance = new Chart(ctx, {
-        type: "pie",
-        data: {
-          labels: ["Completed %", "Remaining %"],
-          datasets: [{
-            data: [total, 100 - total],
-            backgroundColor: ["#629477", "#e1ffa8"]
-          }]
-        },
-        options: { responsive: true }
-      });
+      }
+    });
+  } else {
+    const total = summarizeData(data, district).completion_pct;
+    const displayValue = total > 100 ? 100 : total;
+    const extra = total > 100 ? total - 100 : 0;
+
+    const labels = ["Target Achieved", "Remaining"];
+    const dataPoints = [displayValue, 100 - displayValue];
+    const backgroundColors = ["#22c55e", "#e0e7ff"];
+
+    // Add "Overachieved" segment if needed
+    if (extra > 0) {
+      labels.push("Overachieved");
+      dataPoints.push(extra);
+      backgroundColors.push("#facc15"); // Yellow
     }
+
+    completionChartInstance = new Chart(ctx, {
+      type: "doughnut",
+      data: {
+        labels,
+        datasets: [{
+          data: dataPoints,
+          backgroundColor: backgroundColors,
+          borderWidth: 2,
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: "bottom" },
+          tooltip: {
+            callbacks: {
+              label: (context) => `${context.label}: ${context.raw}%`
+            }
+          }
+        },
+        cutout: "60%", // This creates the donut hole
+      }
+    });
   }
+}
+
 
   function renderDashboard(district = "All") {
   const data = district === "All"
