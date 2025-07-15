@@ -291,7 +291,7 @@
     "Coochbehar": 1300
   };
 
-  async function fetchData() {
+ async function fetchData() {
   try {
     const res = await fetch("/api/data");
     const json = await res.json();
@@ -308,6 +308,11 @@
         cataract_detected: +f["No. of person detected with Cataract"] || 0
       };
     });
+
+    // ✅ Move window bindings here
+    window.airtableData = airtableData;
+    window.summarizeData = summarizeData;
+    window.groupByBlock = groupByBlock;
 
     populateDistricts();
     renderDashboard();
@@ -518,10 +523,7 @@ districtSelect.addEventListener("change", (e) => {
 });
 
 fetchData();
-  window.summarizeData = summarizeData;
-window.groupByBlock = groupByBlock;
-window.airtableData = airtableData;
-
+  
 </script>
   <script src="/scripts/report.js"></script>
 </body>
