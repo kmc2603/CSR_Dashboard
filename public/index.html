@@ -8,9 +8,10 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
-<script>
-  window.jspdf = window.jspdf || {};
-  window.jspdf.jsPDF = window.jspdf.jsPDF || window.jspdf.jsPDF;
+<script type="module">
+  import { jsPDF } from "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+  window.jspdf = { jsPDF };
+  window.isPDFReady = true;
 </script>
 
 
