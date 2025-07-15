@@ -221,6 +221,20 @@
   box-shadow: 0 0 15px rgba(34,197,94,0.4);
   background: #f0fff4;
 }
+    .trophy-emoji {
+  display: inline-block;
+  animation: bounceTrophy 1.2s ease-in-out infinite;
+}
+
+@keyframes bounceTrophy {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-6px) scale(1.1);
+  }
+}
+
 
 @keyframes blink-lid {
   0%, 95%, 100% {
@@ -577,11 +591,10 @@
     <div class="card">👁️ Cataract Cases<br><b>${sum.cataract_detected}</b></div>
     
     <div class="card">📊 Camps Done<br><b>${sum.camps_done}/${sum.camps_allotted}</b></div>
-    <div class="card ${sum.overachieved ? 'highlight-card' : ''}">
+   div class="card ${sum.overachieved ? 'highlight-card' : ''}">
   ✅ Completion<br>
-  <b>${sum.completion_pct}% ${sum.overachieved ? '🏆' : ''}</b>
+  <b>${sum.completion_pct}% ${sum.overachieved ? '<span class="trophy-emoji">🏆</span>' : ''}</b>
 </div>
-
     <div class="card">📅 Avg Spectacles/Camp<br><b>${sum.avg_specs_per_camp}</b></div>
     <div class="card">📈 Expected Spectacles/Camp<br><b>${sum.expected_specs_per_camp}</b></div>
     <div class="card">🎯 Total Expected Beneficiaries<br><b>${sum.expected_target}</b></div>
