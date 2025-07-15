@@ -461,17 +461,20 @@
     return map;
   }
 
-  function groupByDate(data) {
-    const map = {};
-    data.forEach(d => {
-      if (!d.camp_date) return;
-      if (!map[d.camp_date]) map[d.camp_date] = { screened: 0, specs: 0 };
-      map[d.camp_date].screened += d.screened;
-      map[d.camp_date].specs += d.specs_prescribed;
-      map[d.block].specs += d.specs_prescribed;
-    });
-    return map;
-  }
+function groupByBlock(data) {
+  const map = {};
+  data.forEach(d => {
+    if (!map[d.block]) {
+      map[d.block] = { screened: 0, re: 0, cataract: 0, specs: 0 };
+    }
+    map[d.block].screened += d.screened;
+    map[d.block].re += d.re_detected;
+    map[d.block].cataract += d.cataract_detected;
+    map[d.block].specs += d.specs_prescribed; // ✅ Fix added here
+  });
+  return map;
+}
+
 
   function groupDistrictCompletion() {
     const result = {};
