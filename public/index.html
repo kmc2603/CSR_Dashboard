@@ -9,7 +9,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
 <script>
-  // Ensure jsPDF is loaded correctly from the UMD bundle
+  window.jspdf = window.jspdf || {};
+  window.jspdf.jsPDF = window.jspdf.jsPDF || window.jspdf.jsPDF;
+
   document.addEventListener("DOMContentLoaded", () => {
     if (window.jspdf && window.jspdf.jsPDF) {
       window.isPDFReady = true;
@@ -20,8 +22,6 @@
     }
   });
 </script>
-
-
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <style>
@@ -264,8 +264,9 @@
 </div>
 <div style="text-align:center; margin-bottom:2rem;">
   <button id="downloadAllBtn">📥 Download All-District Report</button>
-<button id="downloadDistrictBtn">📥 Download This District Report</button>
+  <button id="downloadDistrictBtn">📥 Download This District Report</button>
 </div>
+
 
   <div class="cards-container" id="summaryCards"></div>
 
@@ -335,7 +336,7 @@
   const districts = [...new Set(airtableData.map(d => d.district))].filter(d => d.trim() !== "");
   const sortedDistricts = districts.sort((a, b) => a.localeCompare(b));
 
-  // Clear old options and re-add "All Districts"
+  
   sel.innerHTML = `<option value="All">All Districts</option>`;
 
   sortedDistricts.forEach(d => {
@@ -527,11 +528,13 @@
       else alert("⚠️ PDF generation not available.");
     });
 
+
     document.getElementById("downloadDistrictBtn").addEventListener("click", () => {
       const district = document.getElementById("districtFilter").value;
       if (window.generatePDF) generatePDF(district);
       else alert("⚠️ PDF generation not available.");
     });
+
 
     const districtSelect = document.getElementById("districtFilter");
     districtSelect.addEventListener("change", (e) => {
@@ -539,6 +542,61 @@
       setTimeout(() => e.target.blur(), 10);
     });
   });
+</script>
+ 
+  
+<script>
+function generatePDF(district = "All") {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF("p", "mm", "a4");
+  const margin = 15;
+  let y = margin;
+
+  const data = district === "All"
+    ? airtableData
+    : airtableData.filter(d => d.district === district);
+
+  const sum = summarizeData(data, district);
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.text(`Free Eye Screening Camps Report`, margin, y);
+  y += 8;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(12);
+  doc.text(`District: ${district}`, margin, y);
+  y += 7;
+  doc.text(`Generated on: ${new Date().toLocaleString()}`, margin, y);
+  y += 10;
+
+  const rows = [
+    ["Total Screened", sum.screened],
+    ["R.E. Detected", sum.re_detected],
+    ["Spectacles Prescribed", sum.specs_prescribed],
+    ["Cataract Cases", sum.cataract_detected],
+    ["Camps Done", `${sum.camps_done} / ${sum.camps_allotted}`],
+    ["Completion %", `${sum.completion_pct}%`],
+    ["Avg Spectacles/Camp", sum.avg_specs_per_camp],
+    ["Expected Specs/Camp", sum.expected_specs_per_camp],
+    ["Target Beneficiaries", sum.expected_target],
+  ];
+
+  doc.autoTable({
+    startY: y,
+    head: [["Indicator", "Value"]],
+    body: rows,
+    styles: { halign: "left" },
+    headStyles: { fillColor: [60, 130, 100] }
+  });
+
+  y = doc.lastAutoTable.finalY + 10;
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "italic");
+  doc.text("Note: Graphical summaries are available on the live dashboard.", margin, y);
+
+  doc.save(`${district}_CSR_Eye_Camp_Report.pdf`);
+}
 </script>
 <script src="/scripts/report.js"></script>
 
