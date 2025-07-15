@@ -468,6 +468,7 @@
       if (!map[d.camp_date]) map[d.camp_date] = { screened: 0, specs: 0 };
       map[d.camp_date].screened += d.screened;
       map[d.camp_date].specs += d.specs_prescribed;
+      map[d.block].specs += d.specs_prescribed;
     });
     return map;
   }
