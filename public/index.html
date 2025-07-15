@@ -451,16 +451,7 @@
 }
 
 
-  function groupByBlock(data) {
-    const map = {};
-    data.forEach(d => {
-      if (!map[d.block]) map[d.block] = { screened: 0, re: 0, cataract: 0 };
-      map[d.block].screened += d.screened;
-      map[d.block].re += d.re_detected;
-      map[d.block].cataract += d.cataract_detected;
-    });
-    return map;
-  }
+  
 
 function groupByBlock(data) {
   const map = {};
