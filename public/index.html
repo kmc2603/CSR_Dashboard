@@ -450,6 +450,18 @@
   };
 }
 
+function groupByDate(data) {
+  const result = {};
+  data.forEach(d => {
+    const date = d.camp_date;
+    if (!result[date]) {
+      result[date] = { screened: 0, specs: 0 };
+    }
+    result[date].screened += d.screened;
+    result[date].specs += d.specs_prescribed;
+  });
+  return result;
+}
 
   
 
