@@ -263,12 +263,8 @@
   </select>
 </div>
 <div style="text-align:center; margin-bottom:2rem;">
-  <button id="downloadAllBtn" onclick="generatePDF('All')" style="margin: 0.5rem; padding: 0.6rem 1.2rem; font-weight: 600;">
-    📥 Download All-District Report
-  </button>
-  <button id="downloadDistrictBtn" onclick="generatePDF(document.getElementById('districtFilter').value)" style="margin: 0.5rem; padding: 0.6rem 1.2rem; font-weight: 600;">
-    📥 Download This District Report
-  </button>
+  <button id="downloadAllBtn">📥 Download All-District Report</button>
+<button id="downloadDistrictBtn">📥 Download This District Report</button>
 </div>
 
   <div class="cards-container" id="summaryCards"></div>
@@ -516,25 +512,38 @@
   renderLineChart(data);
   renderCompletionChart(data, district);
 }
-// Existing renderDashboard function here...
 
-const districtSelect = document.getElementById("districtFilter");
-let lastSelectedDistrict = null;
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    fetchData();
 
-districtSelect.addEventListener("input", (e) => {
-  lastSelectedDistrict = e.target.value;
-});
+    document.getElementById("downloadAllBtn").addEventListener("click", () => {
+      if (window.generatePDF) generatePDF("All");
+      else alert("⚠️ PDF generation not available.");
+    });
 
-districtSelect.addEventListener("change", (e) => {
-  const value = e.target.value;
-  renderDashboard(value);
-  setTimeout(() => e.target.blur(), 10); // prevent scrolling after selection
-});
+    document.getElementById("downloadDistrictBtn").addEventListener("click", () => {
+      const district = document.getElementById("districtFilter").value;
+      if (window.generatePDF) generatePDF(district);
+      else alert("⚠️ PDF generation not available.");
+    });
+ const districtSelect = document.getElementById("districtFilter");
+    let lastSelectedDistrict = null;
 
-fetchData();
-  
+    districtSelect.addEventListener("input", (e) => {
+      lastSelectedDistrict = e.target.value;
+    });
+
+    districtSelect.addEventListener("change", (e) => {
+      const value = e.target.value;
+      renderDashboard(value);
+      setTimeout(() => e.target.blur(), 10);
+    });
+  });
 </script>
-  <script src="/scripts/report.js"></script>
+   
+ 
 
+  <script src="/scripts/report.js"></script>
 </body>
 </html>
