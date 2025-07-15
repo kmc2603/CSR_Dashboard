@@ -78,11 +78,12 @@ if (!window.airtableData || window.airtableData.length === 0) {
       blockData[block].screened,
       blockData[block].re,
       blockData[block].cataract
+      blockData[block].specs
     ]);
 
     doc.autoTable({
       startY: y,
-      head: [["Block", "Screened", "R.E. detected", "Cataract Identified"]],
+      head: [["Block", "Screened", "R.E. detected", "Cataract Identified","Spectacles"]],
       body: rows,
       theme: "striped",
       headStyles: { fillColor: [94, 53, 177] },
