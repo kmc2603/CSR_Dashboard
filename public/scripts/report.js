@@ -1,5 +1,5 @@
 function generatePDF(district = "All") {
-  if (!window.jspdf || !window.jspdf.jsPDF) {
+  if (!window.isPDFReady || typeof window.jspdf?.jsPDF !== "function") {
   alert("⚠️ jsPDF not ready.");
   return;
 }
