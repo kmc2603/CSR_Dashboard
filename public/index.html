@@ -4,27 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Free Eye Screening Camps Dashboard</title>
-
-  <!-- Load Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
-  <!-- Load Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
 
-  <!-- Load html2canvas (used by jsPDF for screen capture, optional) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
-  <!-- Load jsPDF and autoTable with normal <script> tags -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
 <script>
   window.jspdf = window.jspdf || {};
   window.jspdf.jsPDF = window.jspdf.jsPDF || window.jspdf.jsPDF;
-  window.isPDFReady = true;
 </script>
 
- 
-   
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     * { box-sizing: border-box; }
     body {
@@ -264,10 +254,10 @@
   </select>
 </div>
 <div style="text-align:center; margin-bottom:2rem;">
-  <button id="downloadAllBtn" disabled onclick="generatePDF('All')" style="margin: 0.5rem;">
+  <button id="downloadAllBtn" onclick="generatePDF('All')" style="margin: 0.5rem; padding: 0.6rem 1.2rem; font-weight: 600;">
     📥 Download All-District Report
   </button>
-  <button id="downloadDistrictBtn" disabled onclick="generatePDF(document.getElementById('districtFilter').value)" style="margin: 0.5rem;">
+  <button id="downloadDistrictBtn" onclick="generatePDF(document.getElementById('districtFilter').value)" style="margin: 0.5rem; padding: 0.6rem 1.2rem; font-weight: 600;">
     📥 Download This District Report
   </button>
 </div>
@@ -301,63 +291,48 @@
     "Coochbehar": 1300
   };
 
- async function fetchData() {
+  async function fetchData() {
   try {
     const res = await fetch("/api/data");
     const json = await res.json();
 
-window.airtableData = json.records.map(r => {
-  const f = r.fields;
-  return {
-    district: f["Name of the District"] || "",
-    block: f["Block at which camp held"] || "",
-    camp_date: f["Date of the Camp Being Held"] || "",
-    screened: +f["No. of persons Screened"] || 0,
-    re_detected: +f["No. of person detected with R.E."] || 0,
-    specs_prescribed: +f["No. of Spectacles prescribed"] || 0,
-    cataract_detected: +f["No. of person detected with Cataract"] || 0
-  };
-});
+    airtableData = json.records.map(r => {
+      const f = r.fields;
+      return {
+        district: f["Name of the District"] || "",
+        block: f["Block at which camp held"] || "",
+        camp_date: f["Date of the Camp Being Held"] || "",
+        screened: +f["No. of persons Screened"] || 0,
+        re_detected: +f["No. of person detected with R.E."] || 0,
+        specs_prescribed: +f["No. of Spectacles prescribed"] || 0,
+        cataract_detected: +f["No. of person detected with Cataract"] || 0
+      };
+    });
 
-    await fetchData();
     populateDistricts();
-    console.log("✅ Populating districts from:", airtableData.map(d => d.district));
-
     renderDashboard();
-    console.log("✅ Render dashboard for district:", district);
-
-
-    // ✅ Enable the report buttons
-    document.getElementById("downloadAllBtn").disabled = false;
-    document.getElementById("downloadDistrictBtn").disabled = false;
-    console.log("✅ Enabling download buttons");
-
   } catch (error) {
     alert("⚠️ Failed to load data");
     console.error(error);
   }
-} // ✅ This is the correct closing brace
+}
 
 
-function populateDistricts() {
+
+  function populateDistricts() {
   const sel = document.getElementById("districtFilter");
-
-  // Get only unique, valid district names
-  const districts = [...new Set(airtableData.map(d => d.district))].filter(d => d && d.trim() !== "");
-
-  // Sort alphabetically
+  const districts = [...new Set(airtableData.map(d => d.district))].filter(d => d.trim() !== "");
   const sortedDistricts = districts.sort((a, b) => a.localeCompare(b));
 
+  // Clear old options and re-add "All Districts"
   sel.innerHTML = `<option value="All">All Districts</option>`;
 
-  for (const d of sortedDistricts) {
+  sortedDistricts.forEach(d => {
     const opt = document.createElement("option");
-    opt.value = d.trim();
-    opt.textContent = d.trim();
+    opt.value = d;
+    opt.textContent = d;
     sel.appendChild(opt);
-  }
-
-  console.log("✅ Districts populated:", sortedDistricts);
+  });
 }
 
 
@@ -542,20 +517,8 @@ districtSelect.addEventListener("change", (e) => {
   setTimeout(() => e.target.blur(), 10); // prevent scrolling after selection
 });
 
-
+fetchData();
 function generatePDF(district = "All") {
-  console.log("🧪 DEBUG INFO:");
-  console.log("window.isPDFReady:", window.isPDFReady);
-  console.log("window.jspdf:", window.jspdf);
-  console.log("window.jspdf.jsPDF:", window.jspdf?.jsPDF);
-  console.log("window.airtableData:", window.airtableData);
-  console.log("airtableData.length:", window.airtableData?.length);
-
-  if (!window.isPDFReady || !window.jspdf || !window.jspdf.jsPDF || !window.airtableData || airtableData.length === 0) {
-    alert("⚠️ jsPDF or data not ready.");
-    return;
-  }
-
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF("p", "mm", "a4");
   const margin = 15;
@@ -599,7 +562,6 @@ function generatePDF(district = "All") {
     headStyles: { fillColor: [60, 130, 100] }
   });
 
-  // Optional chart summary section (placeholder)
   y = doc.lastAutoTable.finalY + 10;
   doc.setFontSize(11);
   doc.setFont("helvetica", "italic");
@@ -607,17 +569,7 @@ function generatePDF(district = "All") {
 
   doc.save(`${district}_CSR_Eye_Camp_Report.pdf`);
 }
-  window.generatePDF = generatePDF;
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("🚀 DOM ready — Fetching data");
-  fetchData(); // drop `window.` here
-});
-  console.log("✅ Records loaded:", airtableData.length);
-console.log("✅ Districts:", [...new Set(airtableData.map(d => d.district))]);
-
-
 
 </script>
 </body>
 </html>
-
