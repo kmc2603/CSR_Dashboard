@@ -11,8 +11,17 @@
 <script>
   window.jspdf = window.jspdf || {};
   window.jspdf.jsPDF = window.jspdf.jsPDF || window.jspdf.jsPDF;
-</script>
 
+  document.addEventListener("DOMContentLoaded", () => {
+    if (window.jspdf && window.jspdf.jsPDF) {
+      window.isPDFReady = true;
+      console.log("✅ jsPDF is ready");
+    } else {
+      console.error("❌ jsPDF not available");
+      window.isPDFReady = false;
+    }
+  });
+</script>
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <style>
@@ -254,13 +263,10 @@
   </select>
 </div>
 <div style="text-align:center; margin-bottom:2rem;">
-  <button id="downloadAllBtn" onclick="generatePDF('All')" style="margin: 0.5rem; padding: 0.6rem 1.2rem; font-weight: 600;">
-    📥 Download All-District Report
-  </button>
-  <button id="downloadDistrictBtn" onclick="generatePDF(document.getElementById('districtFilter').value)" style="margin: 0.5rem; padding: 0.6rem 1.2rem; font-weight: 600;">
-    📥 Download This District Report
-  </button>
+  <button id="downloadAllBtn">📥 Download All-District Report</button>
+  <button id="downloadDistrictBtn">📥 Download This District Report</button>
 </div>
+
 
   <div class="cards-container" id="summaryCards"></div>
 
@@ -291,23 +297,29 @@
     "Coochbehar": 1300
   };
 
-  async function fetchData() {
+ async function fetchData() {
   try {
     const res = await fetch("/api/data");
     const json = await res.json();
 
-    airtableData = json.records.map(r => {
-      const f = r.fields;
-      return {
-        district: f["Name of the District"] || "",
-        block: f["Block at which camp held"] || "",
-        camp_date: f["Date of the Camp Being Held"] || "",
-        screened: +f["No. of persons Screened"] || 0,
-        re_detected: +f["No. of person detected with R.E."] || 0,
-        specs_prescribed: +f["No. of Spectacles prescribed"] || 0,
-        cataract_detected: +f["No. of person detected with Cataract"] || 0
-      };
-    });
+ airtableData = json.records.map(r => {
+  const f = r.fields;
+  return {
+    district: f["Name of the District"] || "",
+    block: f["Block at which camp held"] || "",
+    camp_date: f["Date of the Camp Being Held"] || "",
+    screened: +f["No. of persons Screened"] || 0,
+    re_detected: +f["No. of person detected with R.E."] || 0,
+    specs_prescribed: +f["No. of Spectacles prescribed"] || 0,
+    cataract_detected: +f["No. of person detected with Cataract"] || 0
+  };
+});
+
+
+    // ✅ Move window bindings here
+    window.airtableData = airtableData;
+    window.summarizeData = summarizeData;
+    window.groupByBlock = groupByBlock;
 
     populateDistricts();
     renderDashboard();
@@ -324,7 +336,7 @@
   const districts = [...new Set(airtableData.map(d => d.district))].filter(d => d.trim() !== "");
   const sortedDistricts = districts.sort((a, b) => a.localeCompare(b));
 
-  // Clear old options and re-add "All Districts"
+  
   sel.innerHTML = `<option value="All">All Districts</option>`;
 
   sortedDistricts.forEach(d => {
@@ -502,22 +514,38 @@
   renderLineChart(data);
   renderCompletionChart(data, district);
 }
-// Existing renderDashboard function here...
 
-const districtSelect = document.getElementById("districtFilter");
-let lastSelectedDistrict = null;
+  document.addEventListener("DOMContentLoaded", async () => {
+    await fetchData();
 
-districtSelect.addEventListener("input", (e) => {
-  lastSelectedDistrict = e.target.value;
-});
+    const script = document.createElement("script");
+    script.src = "/scripts/report.js";
+    document.body.appendChild(script);
 
-districtSelect.addEventListener("change", (e) => {
-  const value = e.target.value;
-  renderDashboard(value);
-  setTimeout(() => e.target.blur(), 10); // prevent scrolling after selection
-});
+    // button bindings
+    document.getElementById("downloadAllBtn").addEventListener("click", () => {
+      if (window.generatePDF) generatePDF("All");
+      else alert("⚠️ PDF generation not available.");
+    });
 
-fetchData();
+
+    document.getElementById("downloadDistrictBtn").addEventListener("click", () => {
+      const district = document.getElementById("districtFilter").value;
+      if (window.generatePDF) generatePDF(district);
+      else alert("⚠️ PDF generation not available.");
+    });
+
+
+    const districtSelect = document.getElementById("districtFilter");
+    districtSelect.addEventListener("change", (e) => {
+      renderDashboard(e.target.value);
+      setTimeout(() => e.target.blur(), 10);
+    });
+  });
+</script>
+ 
+  
+<script>
 function generatePDF(district = "All") {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF("p", "mm", "a4");
@@ -569,10 +597,8 @@ function generatePDF(district = "All") {
 
   doc.save(`${district}_CSR_Eye_Camp_Report.pdf`);
 }
-
 </script>
+<script src="/scripts/report.js"></script>
+
 </body>
 </html>
-
-
-
