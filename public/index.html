@@ -301,18 +301,19 @@
     const res = await fetch("/api/data");
     const json = await res.json();
 
-    airtableData = json.records.map(r => {
-      const f = r.fields;
-      return {
-        district: f["Name of the District"] || "",
-        block: f["Block at which camp held"] || "",
-        camp_date: f["Date of the Camp Being Held"] || "",
-        screened: +f["No. of persons Screened"] || 0,
-        re_detected: +f["No. of person detected with R.E."] || 0,
-        specs_prescribed: +f["No. of Spectacles prescribed"] || 0,
-        cataract_detected: +f["No. of person detected with Cataract"] || 0
-      };
-    });
+ airtableData = json.records.map(r => {
+  const f = r.fields;
+  return {
+    district: f["district"] || "",
+    block: f["block"] || "",
+    camp_date: f["camp_date"] || "",
+    screened: +f["screened"] || 0,
+    re_detected: +f["re_detected"] || 0,
+    specs_prescribed: +f["specs_prescribed"] || 0,
+    cataract_detected: +f["cataract_detected"] || 0
+  };
+});
+
 
     // ✅ Move window bindings here
     window.airtableData = airtableData;
