@@ -77,8 +77,8 @@ if (!window.airtableData || window.airtableData.length === 0) {
       block,
       blockData[block].screened,
       blockData[block].re,
-      blockData[block].cataract
-      blockData[block].specs
+      blockData[block].cataract,
+      blockData[block].specs,
     ]);
 
     doc.autoTable({
