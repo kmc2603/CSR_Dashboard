@@ -1,8 +1,13 @@
 function generatePDF(district = "All") {
-  if (!window.jspdf || !window.jspdf.jsPDF || !window.airtableData) {
-    alert("⚠️ jsPDF or data not ready.");
-    return;
-  }
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+  alert("⚠️ jsPDF not ready.");
+  return;
+}
+if (!window.airtableData || window.airtableData.length === 0) {
+  alert("⚠️ Data not loaded. Please wait or refresh.");
+  return;
+}
+
 
   const doc = new window.jspdf.jsPDF();
   const margin = 15;
