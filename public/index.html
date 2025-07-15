@@ -135,15 +135,15 @@
 
 #completionChartWrapper.specific-district {
   max-width: 400px;
-  height: 300px;
+  aspect-ratio: 1 / 1; /* ✅ maintains a perfect square */
   margin: 0 auto;
 }
 
 #completionChart {
   width: 100% !important;
-  height: 100% !important;
+  height: auto !important;
+  display: block;
 }
-
     @keyframes fadeInDown {
       from { opacity: 0; transform: translateY(-30px); }
       to { opacity: 1; transform: translateY(0); }
@@ -558,7 +558,8 @@ wrapper.className = district === "All" ? "all-districts" : "specific-district";
         }
       }
     });
-  } else {
+  } 
+  else {
     const total = summarizeData(data, district).completion_pct;
     const displayValue = total > 100 ? 100 : total;
     const extra = total > 100 ? total - 100 : 0;
