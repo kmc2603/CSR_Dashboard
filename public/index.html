@@ -216,6 +216,11 @@
   animation: blink-lid 4s infinite;
   transition: animation-duration 0.3s;
 }
+    .highlight-card {
+  border: 2px solid #16a34a;
+  box-shadow: 0 0 15px rgba(34,197,94,0.4);
+  background: #f0fff4;
+}
 
 @keyframes blink-lid {
   0%, 95%, 100% {
@@ -402,8 +407,8 @@
       camps_done: totalCampsDone,
       camps_allotted: totalCampsAllotted,
       expected_target: target,
-      completion_pct: Math.min(100, Math.round((totalSpecs / target) * 100)) || 0,
-      avg_specs_per_camp: Math.round(totalSpecs / (totalCampsDone || 1)),
+      completion_pct: Math.round((totalSpecs / target) * 100) || 0,
+      overachieved: (totalSpecs / target) > 1
       expected_specs_per_camp: Math.round(target / totalCampsAllotted)
     };
   }
@@ -537,7 +542,11 @@
     <div class="card">👁️ Cataract Cases<br><b>${sum.cataract_detected}</b></div>
     
     <div class="card">📊 Camps Done<br><b>${sum.camps_done}/${sum.camps_allotted}</b></div>
-    <div class="card">✅ Completion<br><b>${sum.completion_pct}%</b></div>
+    <div class="card ${sum.overachieved ? 'highlight-card' : ''}">
+  ✅ Completion<br>
+  <b>${sum.completion_pct}% ${sum.overachieved ? '🏆' : ''}</b>
+</div>
+
     <div class="card">📅 Avg Spectacles/Camp<br><b>${sum.avg_specs_per_camp}</b></div>
     <div class="card">📈 Expected Spectacles/Camp<br><b>${sum.expected_specs_per_camp}</b></div>
     <div class="card">🎯 Total Expected Beneficiaries<br><b>${sum.expected_target}</b></div>
