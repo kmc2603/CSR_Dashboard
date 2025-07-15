@@ -8,11 +8,19 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
-<script type="module">
-  import { jsPDF } from "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
-  window.jspdf = { jsPDF };
-  window.isPDFReady = true;
+<script>
+  // Ensure jsPDF is loaded correctly from the UMD bundle
+  document.addEventListener("DOMContentLoaded", () => {
+    if (window.jspdf && window.jspdf.jsPDF) {
+      window.isPDFReady = true;
+      console.log("✅ jsPDF is ready");
+    } else {
+      console.error("❌ jsPDF not available");
+      window.isPDFReady = false;
+    }
+  });
 </script>
+
 
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
@@ -526,6 +534,7 @@ districtSelect.addEventListener("change", (e) => {
 fetchData();
   
 </script>
-  <script src="scripts/report.js"></script>
+  <script src="/scripts/report.js"></script>
+
 </body>
 </html>
