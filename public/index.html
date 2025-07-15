@@ -422,32 +422,33 @@
 
 
   function summarizeData(data, district) {
-    const target = district === "All"
-      ? Object.values(districtTargets).reduce((a, b) => a + b, 0)
-      : districtTargets[district] || 1300;
+  const target = district === "All"
+    ? Object.values(districtTargets).reduce((a, b) => a + b, 0)
+    : districtTargets[district] || 1300;
 
-    const completedCamps = data.filter(d => d.screened > 0);
-    const totalCampsDone = completedCamps.length;
-    const totalCampsAllotted = district === "All"
-      ? Object.keys(districtTargets).length * 10
-      : 10;
+  const completedCamps = data.filter(d => d.screened > 0);
+  const totalCampsDone = completedCamps.length;
+  const totalCampsAllotted = district === "All"
+    ? Object.keys(districtTargets).length * 10
+    : 10;
 
-    const totalSpecs = data.reduce((s, d) => s + d.specs_prescribed, 0);
+  const totalSpecs = data.reduce((s, d) => s + d.specs_prescribed, 0);
 
-    return {
-      screened: data.reduce((s, d) => s + d.screened, 0),
-      re_detected: data.reduce((s, d) => s + d.re_detected, 0),
-      specs_prescribed: totalSpecs,
-      cataract_detected: data.reduce((s, d) => s + d.cataract_detected, 0),
-      camps_done: totalCampsDone,
-      camps_allotted: totalCampsAllotted,
-      expected_target: target,
-      completion_pct: Math.round((totalSpecs / target) * 100) || 0,
-      overachieved: (totalSpecs / target) > 1,
-      expected_specs_per_camp: Math.round(target / totalCampsAllotted),
-      avg_specs_per_camp: Math.round(totalSpecs / (totalCampsDone || 1))
-    };
-  }
+  return {
+    screened: data.reduce((s, d) => s + d.screened, 0),
+    re_detected: data.reduce((s, d) => s + d.re_detected, 0),
+    specs_prescribed: totalSpecs,
+    cataract_detected: data.reduce((s, d) => s + d.cataract_detected, 0),
+    camps_done: totalCampsDone,
+    camps_allotted: totalCampsAllotted,
+    expected_target: target,
+    completion_pct: Math.round((totalSpecs / target) * 100) || 0,
+    overachieved: (totalSpecs / target) > 1,
+    expected_specs_per_camp: Math.round(target / totalCampsAllotted),
+    avg_specs_per_camp: Math.round(totalSpecs / (totalCampsDone || 1))
+  };
+}
+
 
   function groupByBlock(data) {
     const map = {};
